@@ -1,0 +1,152 @@
+{{#section 'title'}}
+    Kết quả tìm kiếm
+{{/section}}
+{{#section 'breadcrumbs'}}
+    <div class="row container-fluid">
+        <ol class="breadcrumb breadcrumb-arrow">
+            <li><a href="/home">Trang chủ</a></li>
+            <li class="active"><span>Kết quả tìm kiếm</span></li>
+        </ol>
+        <!-- /Đường dẫn -->
+    </div>
+{{/section}}
+{{#section 'css'}}
+    <style type="text/css">
+    .btn-account i {
+        margin-top: 2%;
+        font-size: 30px;
+    }
+    
+    .btn-account span {
+        padding-left: 15px;
+        padding-right: 5px;
+        width: 100%;
+        display: inline-block;
+        text-align: left;
+        font-size: 130%;
+    }
+    
+    .btn-account span small {
+        width: 100%;
+        display: inline-block;
+        text-align: left;
+    }
+    .content{
+       padding:2px;
+        
+    }
+    .element{
+   
+    border:2px solid red;
+   
+    }
+    .img-film{
+        width:100%;
+       height:400px;
+        display: inline-block;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+    .card{
+        margin-bottom:2%;
+     
+    }
+    .card-body{
+      height:100px;
+    }
+    @media(max-width:500px)
+    {
+      .img-film{
+        height: 300px;
+      }
+     
+    }
+    </style>
+{{/section}}
+{{#section 'js'}}
+    <script type="text/javascript">
+    function addOrUpdateUrlParam(name, value) {
+        var href = window.location.href;
+        var regex = new RegExp("[&\\?]" + name + "=");
+        if (regex.test(href)) {
+            regex = new RegExp("([&\\?])" + name + "=\\d+");
+            window.location.href = href.replace(regex, "$1" + name + "=" + value);
+        } else {
+            if (href.indexOf("?") > -1)
+                window.location.href = href + "&" + name + "=" + value;
+            else
+                window.location.href = href + "?" + name + "=" + value;
+        }
+    }
+    </script>
+{{/section}}
+
+<div class="container" style="color:white">
+    <div class="row" style="margin-bottom: 1%">
+        <h3 style="float: left;">Kết quả tìm kiếm cho '{{word}}':&nbsp</h3>
+        <h3 style="color:#00f">{{total}} kết quả</h3>
+        <hr>
+       <i class="fas fa-filter" style="font-size: 2em;margin-right:2px;"></i>
+        <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {{orderString}}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="javascript: addOrUpdateUrlParam('order', 0);" data-value="action">Từ A đến Z</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 1);" data-value="action">Ngày khởi chiếu tăng dần</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 2);" data-value="another action">Ngày khởi chiếu giảm dần</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 3);" data-value="something else here">Điểm đánh giá tăng dần</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 4);" data-value="separated link">Điểm đánh giá giảm dần</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 5);" data-value="separated link">Phim đang chiếu</a></li>
+                <li><a href="javascript: addOrUpdateUrlParam('order', 6);" data-value="separated link">Phim sắp chiếu</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+    {{#each rows}}
+   
+     <div class="card col-md-4 col-sm-6">
+  <a href="/film/detail/{{idphim}}"><img src="{{hinhanh}}" class="card-img-top img-film"></a>
+  <div class="card-body" style="background: black;margin:0;padding:5px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;color:white">
+    <h3 class="card-title" style="margin:0">{{tenphim}}</h3>
+      <div class="card-text">Khởi chiếu: {{khoichieu}} </div>
+    <div class="card-text">Thời lượng: {{thoiluong}} phút</div>
+    <div class="card-text">Điểm đánh giá: {{diemdanhgia}}</div>
+   
+   
+  </div>
+    </div>
+    {{/each}}
+    </div>
+    
+    </div>
+    <nav aria-label="Page navigation" class="container">
+        <ul class="pagination">
+            {{#if showPrevPage}}
+                <li>
+                    <a href="javascript: addOrUpdateUrlParam('page', {{prevPage}});" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {{/if}}
+            {{#each pages }}
+                {{#if isActive }}
+                    <li class="active">
+                        <a href="javascript: void(0)">{{pageValue}}</a>
+                    </li>
+                {{else}}
+                    <li>
+                        <a href="javascript: addOrUpdateUrlParam('page', {{pageValue}});">{{pageValue}}</a>
+                    </li>
+                {{/if}}
+            {{/each}}
+            {{#if showNextPage }}
+                <li>
+                    <a href="javascript: addOrUpdateUrlParam('page', {{nextPage}});" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {{/if}}
+        </ul>
+    </nav>
