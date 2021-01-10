@@ -1,0 +1,329 @@
+<head>
+    {{!-- <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css"> --}}
+    <link href="/assets/fonts/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/style_v2.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/style_v3.css" rel="stylesheet" type="text/css">
+    <style>
+        .logged {
+            margin-right: 35%;
+            float: right;
+            display: inline;
+        }
+
+        .header {
+            float: left;
+            padding-left: 5px;
+            padding-right: 5px
+        }
+
+        .searchForm {
+            padding-left: 1%;
+            margin-top: 2px;
+            float: left;
+            width: 70%;
+        }
+
+        @media (min-width:1200px) {
+            .logged {
+                margin-right: 3%;
+            }
+
+            .logIn {
+                display: inline;
+                float: right;
+                margin-right: 1%;
+
+            }
+
+            .header {
+                margin-left: 10%;
+
+            }
+
+            .searchForm {
+                width: 30%;
+            }
+        }
+
+        @media only screen and (max-width: 1100px) and (min-width: 767px) {
+            .logged {
+                margin-right: 10%;
+            }
+
+            .logIn {
+
+                float: center;
+
+
+            }
+
+            .searchForm {
+                float: left;
+            }
+
+            .header {
+                width: 75%;
+                border: 1px solid red;
+            }
+
+        }
+
+        @media only screen and (max-width: 321px) and (min-width: 279px) {
+
+            .searchForm {
+
+                width: 60%;
+            }
+
+        }
+    </style>
+
+    <script src="/assets/js/redefine/app.js"></script>
+
+    <script>
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }   
+    </script>
+
+</head>
+
+
+<header class="site-header">
+    <div class="container header">
+        <a href="/home" id="branding">
+            <img src="/Imgs/logo.png" alt="" class="logo logo_header">
+            <div class="logo-copy">
+                <h1 class="site-title">MOVIE THEATER</h1>
+                <small class="site-description">Mang đến trải nghiệm tốt nhất</small>
+            </div>
+        </a> <!-- #branding -->
+
+
+
+
+
+        <div class="main-navigation">
+            <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+            {{#isManage layoutModels.account.permission}}
+            <ul class="menu">
+                {{!-- current-menu-item --}}
+                <li class="menu-item" data-id="1">
+
+                    <div class="dropdown">
+                        <a onclick="myFunction()" class="dropbtn">PHIM</a>
+                        <div id="myDropdown" class="dropdown-content">
+                            <a href="/film/presentFilm">Phim đang chiếu</a>
+                            <a href="/film/futureFilm">Phim sắp chiếu</a>
+
+                        </div>
+                    </div>
+
+                </li>
+                <li class="menu-item" data-id="2"><a href="/theater">RẠP PHIM</a></li>
+                <li class="menu-item" data-id="3"><a href="/showTimes">LỊCH CHIẾU</a></li>
+                <li class="menu-item" data-id="4"><a href="/event">SỰ KIỆN</a></li>
+                <li class="menu-item" data-id="5"><a href="/member">THÀNH VIÊN</a></li>
+
+
+            </ul> <!-- .menu -->
+
+            {{!-- <form action="#" class="search-form">
+                             
+						
+                                
+                           <input type="text" placeholder="Search...">
+                          
+							<button>
+                                <i class="fa fa-search"></i>
+                            </button>
+						</form> --}}
+        </div> <!-- .main-navigation -->
+
+        <form method="get" action="/search" autocomplete="false" id="searchForm">
+            <div class="input-group searchForm">
+                <!-- Dropdown -->
+                <div class="input-group-btn search-panel">
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        style="background-color:#EDEEF2">
+                        <span id="search-concept" class="font-menu">Tất cả</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu font-menu" role="menu">
+                        <li><a href="#danhmuc">Tất cả</a></li>
+                        {{#each layoutModels.categories}}
+                        <li><a href="#{{idtheloai}}">{{tentheloai}}</a></li>
+                        {{/each}}
+                    </ul>
+                </div>
+
+                <!-- Textbox search -->
+
+                <input type="text" placeholder="Tìm kiếm" class="form-control inputtext font-menu" name="word"
+                    size="50" />
+                <input type="hidden" name="cat" value="danhmuc" id="search-param">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        </form>
+
+        {{else}}
+        <ul class="menu">
+            <li class="menu-item" data-id="1"> <a href="/manager/film" class="menu_ele">PHIM</a></li>
+            <li class="menu-item"> <a href="/manager/event" class="menu_ele">SỰ KIỆN</a></li>
+            <li class="menu-item"> <a href="/manager/service" class="menu_ele">DỊCH VỤ</a></li>
+            <li class="menu-item"> <a href="/manager/ticket" class="menu_ele">VÉ</a></li>
+            <li class="menu-item"> <a href="/manager/response" class="menu_ele">PHẢN HỒI</a></li>
+            <li class="menu-item"> <a href="/manager/timeShow" class="menu_ele">LỊCH CHIẾU</a></li>
+            <li class="menu-item"> <a href="/manager/account" class="menu_ele">TÀI KHOẢN</a></li>
+            <li class="menu-item"> <a href="/manager/bookTicket" class="menu_ele">ĐẶT VÉ</a></li>
+            {{#isEqual layoutModels.account.permission 3}}
+            <li class="menu-item"> <a href="/manager/cinemaRoom" class="menu_ele">PHÒNG CHIẾU</a></li>
+            <li class="menu-item"> <a href="/manager/report" class="menu_ele">BÁO CÁO - THỐNG KÊ</a></li>
+            {{/isEqual}}
+        </ul>
+        {{/isManage}}
+
+    </div>
+
+
+    <div class="mobile-navigation"></div>
+
+
+
+
+
+
+    </div>
+
+    </div>
+
+
+    {{#if layoutModels.isLogged }}
+    <div class="logged">
+        <i class="fas fa-user-circle"
+            style="font-size: 35px; color: #fff;height:50px;display:block;text-align:center"></i>
+        <div class="dropdown">
+            <button class="dropbtn">
+                <span style="height: 25px;">
+                    Chào, {{getName layoutModels.account.name}} !
+                    <br />
+
+                </span>
+            </button>
+
+            <div class="dropdown-content">
+                <a href="/account/profile" style="font-weight: normal;"><i class="fas fa-id-card"></i> Thông tin cá
+                    nhân</a>
+                <a href="/account/changePassword" style="font-weight: normal;"><i class="fas fa-key"></i> Đổi mật
+                    khẩu</a>
+                {{#isManage layoutModels.account.permission}}
+                <a href="/account/historyBooking" style="font-weight: normal;"><i class="fas fa-book"></i> Lịch sử giao
+                    dịch</a>
+                <a href="/account/response" style="font-weight: normal;"><i class="fas fa-comment-dots"></i> Phản
+                    hồi</a>
+                    <a href="/account/listresponse" style="font-weight: normal;"><i class="fas fa-reply-all"></i> Quản lý phản
+                hồi</a>
+                {{/isManage}}
+                <a id="logoutLink" href="javascript:void(0);" style="font-weight: normal;"><i
+                        class="fas fa-door-open"></i> Thoát</a>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="logIn">
+        <a class="btn btn-default col-md-2" data-toggle="modal" data-target="#signinModal"
+            style="border:none;background-color:transparent;width:100%">
+            <span class="glyphicon glyphicon-user" style="font-size:150%;color:#fff;"></span>
+            <span style="color:#fff;"> Đăng nhập</span>
+        </a>
+        <!-- Modal -->
+        <div id="signinModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Đăng nhập</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="/account/login">
+                            <div class="input-group">
+                                <!-- Email -->
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                                    required autofocus>
+                            </div>
+                            <!-- Email -->
+                            <div class="input-group">
+                                <!-- Mật khẩu -->
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                                <input type="password" class="form-control" id="mk" name="password"
+                                    placeholder="Password" required>
+                            </div>
+                            <!-- Mật khẩu -->
+                            <div class="col-md-offset-1 col-md-11" style="padding-right: 0;">
+                                <!-- link -->
+                                <div class="col-md-7" style="padding-right: 0; text-align: right;">
+                                    <a href="/account/resetPassword">Quên mật khẩu?</a>
+                                </div>
+                                <div class="col-md-5" style="padding-right: 0; text-align: right;">
+                                    <a href="/account/register">Đăng ký</a>
+                                </div>
+                            </div>
+                            <!-- link -->
+                            <!-- Checkbox duy trì đăng nhập -->
+                            <div class="col-md-offset-4 col-md-8" style="padding-right: 0; text-align: right;">
+                                <div class="checkbox">
+
+                                    <input type="checkbox" name="remember">Duy trì đăng nhập
+
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="padding-left: 0; padding-right: 0;">
+                                <button type="submit" class="btn btn-labeled btn-success" style="width: 49%">
+                                    <span class="btn-label"><i class="glyphicon glyphicon-ok"></i></span> Đăng
+                                    nhập</button>
+                                <button type="button" class="btn btn-labeled btn-danger" data-dismiss="modal"
+                                    style="width: 49%">
+                                    <span class="btn-label"><i class="glyphicon glyphicon-remove"></i></span>
+                                    Hủy</button>
+                            </div>
+                            <div class="col-md-12" style="padding: 0;">
+                                <hr />
+                            </div>
+                            <a class="btn btn-block btn-social btn-facebook" href="/auth/facebook">
+                                <span class="fab fa-facebook"></span> Đăng nhập với facebook
+                            </a>
+                            <a class="btn btn-block btn-social btn-google" href="/auth/google">
+                                <span class="fab fa-google"></span> Đăng nhập với google
+                            </a>
+                        </form>
+                    </div>
+                    {{!-- <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div> --}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        {{/if}}
+
+</header>
