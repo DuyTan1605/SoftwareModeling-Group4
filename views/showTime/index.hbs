@@ -1,0 +1,324 @@
+{{#section 'title'}} Lịch Chiếu {{/section}}
+{{#section 'css'}}
+    <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" />
+     {{!-- <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css"> 
+    <link href="/assets/css/docs.css" rel="stylesheet">
+      <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+      <style>
+    .list-area{
+        list-style-type: none;
+        color:white
+    }
+    .list-theater{
+        list-style-type: none;
+        margin-top:5px;
+    }
+
+    .list-area>li{
+        display: inline-block;
+        margin-left:1%;
+        padding:10px 20px;
+        color:white
+    }
+    .list-theater>li{
+        display: inline-block;
+        margin-left:1%;
+        padding:10px 20px;
+        color:white;
+        border-radius: 20px;
+    }
+   .list-area>li>a{
+        color:white;
+        text-decoration: none;
+    }
+    .list-theater>li>a{
+        color:white;
+        text-decoration: none;
+    }
+    .bg-active{
+          background-color:rgb(255, 51, 153);
+    }
+    .bg-active-theater{
+         background-color:darkorange
+    }
+
+    .list-movie-ele{
+      
+       padding:2px;
+     
+      margin-top:2%
+    }
+     .element{
+        display: flex;
+         flex-wrap: nowrap;
+        flex-direction: row;
+        
+    }
+    .element-left{
+        flex: 0 1 40%;
+    }
+    .element-right{
+        flex:0 1 60%; 
+        color:white;
+        margin-left:2%;
+        padding:5px;
+    }
+    .img-film{
+        width:100%;
+        height:300px
+    }
+    .bg-green{
+        background-color: green;
+    }
+    .time-show{
+        list-style-type: none;
+      
+        margin-top:10px;
+        width: 100%;
+    }
+    .time-show>li{
+        display: inline-block;
+        color:red;
+        padding:5px;
+       
+        margin-top:3px
+    }
+    .time-show>li>a{
+       text-decoration: none;
+       color:white;
+       background-color: grey;
+       padding:5px
+    }
+    @media(max-width:500px)
+    {
+        .img-film{
+            height: 200px;
+        }
+    }
+   
+}
+  
+</style>
+{{/section}}
+{{#section 'js'}}
+<script type="text/javascript" src="/assets/bootstrap-4.3.1-dist/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript">
+$('.form_date').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+    function transfer(temp,idPhim,idPhong,ngayChieu)
+    {
+       // console.log(temp,idPhim,idPhong,ngayChieu);
+         var theaters=JSON.parse(decodeURIComponent("{{{showTimes}}}"));
+         //console.log(theaters);
+         let film=theaters.find(function(x)
+         {
+             //console.log(x);
+             return x.idphim==idPhim && x.giochieu==temp && x.idphongchieu==idPhong && x.ngaychieu==ngayChieu;
+         });
+         //console.log(temp,idPhim,idPhong,ngayChieu.slice(0,10),film);
+        window.location.href=`/book?idFilm=${film.idphim}&idTheater=${film.idrap}&idRoom=${film.idphongchieu}&timeShow=${film.giochieu}&dateShow=${film.ngaychieu}`;
+    }
+    $(document).on('click', function(){
+       
+
+          $('.list-theater li a').on('click',function()
+        {
+            //console.log( $(this).text());
+            $('.list-theater li').removeClass('bg-active-theater');
+            $(this).parent().addClass('bg-active-theater');
+             $('.list-movies').empty();
+                $("#date").val('');
+           
+        });
+       
+       
+    });
+    $(document).ready(function()
+    {
+        
+      
+     displayListArea();
+     
+       displayListTheater($('.list-area li:first-child a').text());
+      
+        
+        
+        $("#date").on('change',function()
+        {
+            var getDate=new Date($("#dtp_input2").val());
+            var getArea=$(".bg-active").text();
+            var getTheater=$(".bg-active-theater").text();
+            var list=JSON.parse(decodeURIComponent("{{{showTimes}}}"));
+         
+           list=list.filter(function(x)
+           {
+               var temp=new Date(x.ngaychieu);
+               //console.log(temp);
+               //console.log(getDate);
+               return String(temp)==String(getDate) && x.tenkhuvuc==getArea && x.tenrap==getTheater;
+           });
+            displayFilm(list);
+        });
+      
+        function checkExist(newList,x,y)
+        {
+           
+            for(let i=0;i<newList.length;i++)
+            {
+                if(newList[i].idphim==x && newList[i].idphongchieu==y)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        function displayFilm(list)
+        {
+            //console.log(list);
+            $(".list-movies").empty();
+            var html="";
+            var newList=[];
+            var pos=0;
+            for(let i=0;i<list.length;i++)
+            {
+               
+                var res=checkExist(newList,list[i].idphim,list[i].idphongchieu);
+                if(res==-1)
+                {
+                    var temp=list[i];
+                    temp.arrTimes=[];
+                    temp.arrTimes.push(list[i].giochieu);
+                    newList.push(temp);
+                }
+               else
+                {
+                    newList[res].arrTimes.push(list[i].giochieu);
+                }    
+                
+            }
+            console.log(newList);
+            for(let i=0;i<newList.length;i++)
+            {
+                html+=`
+                <div class="col-md-6 col-sm-12 list-movie-ele element">
+                    <div class="element-left">
+                        <img src="${newList[i].hinhanh}" class="img-film">
+                    </div>
+                    <div class="element-right">
+                        <div>
+                            <h4 class="bg-green" style="display:inline;padding:2px">2D SUB</h4>
+                        </div>
+                        <div style="margin-top:2%">
+                            <h4>${newList[i].tenphim}</h4>
+                        </div>
+                        <div>
+                            <h4 style="display:inline;padding:2px;border:2px solid red">${newList[i].tenphongchieu}</h4>
+                        </div>
+                        <ul class="time-show">`;
+                        for(let j=0;j<newList[i].arrTimes.length;j++)
+                        {
+                            html+=`
+                                <li><a href='#' onclick="transfer('${newList[i].arrTimes[j]}',${newList[i].idphim},${newList[i].idphongchieu},'${newList[i].ngaychieu}')">${newList[i].arrTimes[j]}</a></li>`;
+                         
+                        }
+                        html+=`   </ul>
+                    </div>
+                </div>
+                `;
+            }
+            $(".list-movies").append(html);
+        }
+         
+         function displayListArea()
+       {
+           var areas=JSON.parse(decodeURIComponent("{{{areas}}}"));
+           console.log(areas);
+           var html='';
+           for(let i=0;i<areas.length;i++)
+           {
+               if(i==0)
+               {
+               html+=`<li class="bg-active"><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+               }
+               else{
+                   html+=`<li><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+               }
+           }
+           $('.list-area').append(html);
+       }
+       function displayListTheater(area)
+        {
+           
+             var theaters=JSON.parse(decodeURIComponent("{{{theaters}}}"));
+             theaters=theaters.filter(function(x)
+             {
+                 return x.tenkhuvuc==area;
+             });
+             
+             let html='';
+             for(let i=0;i<theaters.length;i++)
+             {
+                 if(i==0)
+               {
+               html+=`<li class="bg-active-theater"><a href="javacript:void(0)">${theaters[i].tenrap}</a></li>`;
+               }
+               else{
+                   html+=`<li><a href="javascript:void(0)">${theaters[i].tenrap}</a></li>`;
+               }
+             }
+             $('.list-theater').append(html);
+        }
+        
+           $('.list-area li a').on('click',function()
+        {
+            console.log( $(this).text());
+            $('.list-area li').removeClass('bg-active');
+            $(this).parent().addClass('bg-active');
+              $('.list-theater').empty();
+               $('.list-movies').empty();
+                $("#date").val('');
+            displayListTheater($(this).text());
+        });
+        
+    
+    });
+</script>
+{{/section}}
+<div class="container">
+<ul class="list-area">
+
+   
+</ul>
+<ul class="list-theater">
+
+</ul>
+<div class="col-md-12" style="margin-top:2%;">
+  <div class="form-group">
+    <div class="col-sm-4">
+        <div class="input-group date form_date" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+            <input id="date" class="form-control" type="text" value="" readonly>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        </div>
+        <input type="hidden" id="dtp_input2" value="" name="dob" />
+        <br/>
+    </div>
+</div>
+</div>
+
+<div class="list-movies">
+    
+</div>
+</div>
+               
+            
+     
