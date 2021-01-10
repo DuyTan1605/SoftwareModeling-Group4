@@ -1,0 +1,135 @@
+{{#section 'css'}}
+    {{!-- <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" /> --}}
+     {{!-- <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css"> 
+    <link href="/assets/css/docs.css" rel="stylesheet">
+      <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+      <style>
+    .list-area{
+        list-style-type: none;
+        color:white
+    }
+    
+    .list-area>li{
+        display: inline-block;
+        margin-left:1%;
+        padding:10px 20px;
+        color:white
+    }
+    
+   .list-area>li>a{
+        color:white;
+        text-decoration: none;
+    }
+    
+    .bg-active{
+          background-color:rgb(255, 51, 153);
+    }
+    .list-theater{
+      margin-top:5%;
+    }
+    .element{
+      padding:0;
+      margin-left:20px;
+      color:white;
+      border:2px solid white;
+      border-radius: 10px;
+      margin-top:20px;
+      transition: width 2s, height 4s;
+    }
+    .element:hover {
+      transform: scale(1.1); 
+    }
+    .img-theater{
+      width:100%;
+      height:200px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .card-title{
+      font-weight: bold;
+      font-size:150%;
+    }
+    .card-text{
+      font-style: italic;
+    }
+</style>
+{{/section}}
+{{#section 'js'}}
+<script type="text/javascript" src="/assets/bootstrap-4.3.1-dist/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript">
+    
+        $(document).ready(function()
+        {
+           displayListArea();
+          function displayListArea()
+          {
+              var areas=JSON.parse(decodeURIComponent("{{{areas}}}"));
+              //console.log(areas);
+              var html='';
+              for(let i=0;i<areas.length;i++)
+              {
+                  if(i==0)
+                  {
+                  html+=`<li class="bg-active"><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+                  }
+                  else{
+                      html+=`<li><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+                  }
+              }
+              $('.list-area').append(html);
+              displayListTheater($(".list-area li:first-child a").html());
+          }
+         
+         function displayListTheater(area)
+         {
+           var theaters=JSON.parse(decodeURIComponent('{{{theaters}}}'));
+           theaters=theaters.filter(function(x)
+            {
+              return x.tenkhuvuc==area;
+            });
+            var html=``;
+            for(let i=0;i<theaters.length;i++)
+            {
+              html+=`
+              <div class="card col-md-3 col-sm-12 element">
+              <img src="/Imgs/theater-image.jpg" class="card-img-top img-theater" title="${theaters[i].tenrap}">
+              <div class="card-body" style="text-align:center">
+                <h5 class="card-title">${theaters[i].tenrap}</h5>
+                <p class="card-text"><i class="fas fa-map-marker-alt"></i> ${theaters[i].diachi}</p>
+                 <p class="card-text"><i class="fas fa-video"></i> ${theaters[i].SLPC}</p>
+                 <p class="card-text"><i class="fas fa-phone-square"></i> ${theaters[i].hostline}</p>
+               
+              </div>
+            </div>
+              `;
+            }
+            $(".list-theater").append(html);
+         }
+
+
+           $('.list-area li a').on('click',function()
+            {
+              $(".list-theater").empty();
+                console.log( $(this).html());
+                $('.list-area li').removeClass('bg-active');
+                $(this).parent().addClass('bg-active');
+                displayListTheater($(this).html())
+            });
+
+        })
+       
+         
+       
+      
+  
+</script>
+{{/section}}
+<div class="container">
+<ul class="list-area">
+</ul>
+<div class="list-theater">
+
+</div>
+</div>
+
