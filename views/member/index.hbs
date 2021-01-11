@@ -1,0 +1,167 @@
+{{#section 'css'}}
+   
+   {{!-- <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" />
+     <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css">  --}}
+    {{!-- <link href="/assets/css/docs.css" rel="stylesheet"> --}}
+      {{!-- <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+       {{!-- <script type="text/javascript" src="/assets/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+   --}}
+   
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexslider/2.6.3/flexslider.min.css">
+
+  <style>
+    label {
+        font-weight: normal !important;
+    }
+    .menu-memberpage{
+        border-bottom: 1px solid white;
+        display:flex;
+        flex-direction: row;
+        flex-wrap: wrap
+    }
+    .menu-ele{
+       flex: 0 1 33%;
+         color:blue;
+    }
+    .custom_btn{
+        border-top-left-radius: 5px;
+        border-top-right-radius:5px ;
+         border-bottom-left-radius:2px ;
+          border-bottom-right-radius:2px ;
+    }
+    .custom_btn:hover
+    {
+        color:blue
+    }
+    .active_btn{
+        background: white;
+       
+    }
+    .content{
+        color:white;
+        margin-top:2%;
+
+    }
+    {{!-- .step-list{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin-top:2%;
+        width:100%;
+    } --}}
+    .step-ele{
+        flex:0 1 30%;
+        margin-right:1%;
+    }
+    .img-step{
+        width:100%;
+        height: 400px;
+        border-radius: 10px;
+        margin-bottom: 2%;
+    }
+</style>
+{{/section}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flexslider/2.6.3/jquery.flexslider-min.js"></script>
+ {{!-- <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+<script>
+    
+    $(document).ready(function()
+    {
+        function displayContent(type)
+        {
+            var html=``;
+            if(type=="HƯỚNG DẪN")
+            {
+                html+=`
+                <div style="color:yellow;font-size:16px;margin-bottom:2%">Đăng ký trở thành thành viên để nhận nhiều ưu đãi: </div>
+                <div class="step-list">
+                    <div class="card col-sm-12 col-md-4">
+                        <a href="#register"><img src="/Imgs/step1.jpg" class="card-img-top img-step"></a>
+                        <div class="card-body" style="text-align:center">
+                            <h4 class="card-title">BƯỚC 1: ĐĂNG KÝ THÀNH VIÊN</h4>
+                    </div>
+                    </div>
+                     <div class="card col-md-4 col-sm-12">
+                        <a href="#point"><img src="/Imgs/step2.jpg" class="card-img-top img-step"></a>
+                        <div class="card-body" style="text-align:center">
+                            <h4 class="card-title">BƯỚC 2: TÍCH LŨY ĐIỂM SỐ</h4>
+                    </div>
+                    </div>
+                     <div class="card col-md-4 col-sm-12">
+                        <a href="#gift"><img src="/Imgs/step3.jpg" class="card-img-top img-step"></a>
+                        <div class="card-body" style="text-align:center">
+                            <h4 class="card-title">BƯỚC 3: ĐỔI QUÀ</h4>
+                    </div>
+                    </div>
+                </div>
+                <div style="margin-top:5%;color:blue;font-weight:bold;font-size:120%" id="register"><i class="fas fa-caret-right"></i> HƯỚNG DẪN ĐĂNG KÝ THÀNH VIÊN</div>
+                <div style="color:yellow;margin-top:1%;font-size:16px">Có 2 cách để trở thành thành viên thân thiết: </div>
+                <ul style="color:yellow">
+                    <li style="margin-bottom:5px;margin-top:5px">Đăng ký trực tiếp tại quầy</li>
+                    <li>Đăng ký trực tuyến tại <a href="/account/register">đây</a></li>
+                </ul>
+
+                <div style="margin-top:5%;color:blue;font-weight:bold;font-size:120%" id="point"><i class="fas fa-caret-right"></i> HƯỚNG DẪN TÍCH LŨY ĐIỂM</div>
+                <div style="color:yellow;margin-top:1%;font-size:16px">Thành viên mua bất ký sản phẩm tại rạp sẽ được tích lũy điểm vào tài khoản cá nhân: </div>
+                <ul style="color:yellow">
+                    <li style="margin-bottom:5px;margin-top:5px">Số lượng không giới hạn</li>
+                    <li style="margin-bottom:5px;margin-top:5px">Áp dụng cho tất cả các sản phẩm: combo, vé, bắp, nước ngọt,..</li>
+                    <li>Lưu ý: Với các dịch vụ trực tuyến cần đăng nhập tài khoản thành viên tưởng ứng</li>
+                </ul>
+
+                 <div style="margin-top:5%;color:blue;font-weight:bold;font-size:120%" id="gift"><i class="fas fa-caret-right"></i> HƯỚNG DẪN ĐỔI QUÀ</div>
+                <div style="color:yellow;margin-top:1%;font-size:16px">Thành viên có thể sử dụng điểm tích lũy để: </div>
+                <ul style="color:yellow">
+                    <li style="margin-bottom:5px;margin-top:5px">Giảm tiền chi trả cho hóa đơn</li>
+                    <li style="margin-bottom:5px;margin-top:5px">Đổi các phần quà(áo,móc khóa,..) tại rạp</li>
+                </ul>
+                `;
+            }
+            if(type=="QUYỀN LỢI")
+            {
+                html+=`
+                <div style="background:red;padding:20px;border-radius:10px;font-size:200%;font-weight:bold;margin-bottom:2%">QUYỀN LỢI CHÍNH</div>
+                <div style="background:orange;padding:10px;border-radius:5px;font-size:150%;font-weight:bold;margin-bottom:5px;color:white">1. Tích điểm đổi quà </div>
+                <div style="background:orange;padding:10px;border-radius:5px;font-size:150%;font-weight:bold;margin-bottom:5px;color:white">2. Tặng điểm tích lũy nhân dịp sự kiện</div>
+                 <div style="background:orange;padding:10px;border-radius:5px;font-size:150%;font-weight:bold;margin-bottom:5px;color:white">3. Giảm giá khi thanh toán tại các quầy</div>
+                  <div style="background:orange;padding:10px;border-radius:5px;font-size:150%;font-weight:bold;margin-bottom:5px;color:white">4. Nhận thông báo sự kiện,ưu đãi nhanh chóng</div>
+                `;
+
+            }
+            if(type=="QUẢN LÝ TÀI KHOẢN")
+            {
+                html+=`
+                <div style="color:yellow;font-size:150%">Sử dụng tài khoản giúp bạn dễ dàng quản lý  :</div>
+                <ul style="color:yellow">
+                    <li style="margin-bottom:1%;margin-top:1%;">Kiểm tra,chỉnh sửa thông tin cá nhân</li>
+                    <li style="margin-bottom:1%;">Xem thông tin phim,sự kiện,đặt vé</li>
+                    <li>Quản lý lịch sử giao dịch</li>
+                </ul>
+                `;
+            }
+            $("#content").append(html);
+        } 
+        $(".menu-ele").on("click",function()
+        {
+            $(".menu-ele").removeClass("active_btn");
+            $(this).addClass("active_btn");
+               $("#content").empty();
+            displayContent($(this).html());
+            
+        })
+        displayContent("HƯỚNG DẪN");
+    })
+</script>
+<div class="main-content">
+    <div class="container">
+    <div class="menu-memberpage">
+    <div class="menu-ele btn custom_btn active_btn isActive col-md-4" id="guide">HƯỚNG DẪN</div>
+        <div class="menu-ele btn custom_btn" id="permission col-md-4">QUYỀN LỢI</div>
+        <div class="menu-ele btn custom_btn" id="manageAccount col-md-4">QUẢN LÝ TÀI KHOẢN</div>
+    </div>
+    <div class="content" id="content">
+
+    </div>
+    </div>
+</div>
