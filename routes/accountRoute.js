@@ -277,18 +277,17 @@ accountRoute.get('/', restrict, function (req, res) {
     });
 });
 
-// accountRoute.get("/historyBooking",restrict,async function(req,res){
-//     var historyList=await account.loadHistoryBooking(res.locals.layoutModels.account.id);
-//     res.render('account/historyBooking',{historyList:historyList});
-// })
-// accountRoute.get("/resetPassword",function(req,res)
-// {
-//     res.render("account/rePass",
-//     {
-//         showError:req.session.showError,
-//         errorMsg:req.session.errorMsg
-//     });
-// })
+accountRoute.get("/historyBooking", restrict, async function (req, res) {
+    var historyList = await account.loadHistoryBooking(res.locals.layoutModels.account.id);
+    res.render('account/historyBooking', { historyList: historyList });
+})
+accountRoute.get("/resetPassword", function (req, res) {
+    res.render("account/rePass",
+        {
+            showError: req.session.showError,
+            errorMsg: req.session.errorMsg
+        });
+})
 
 // accountRoute.post("/resetPassword",function(req,res)
 // {
