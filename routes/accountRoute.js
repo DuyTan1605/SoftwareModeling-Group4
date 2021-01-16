@@ -289,31 +289,30 @@ accountRoute.get("/resetPassword", function (req, res) {
         });
 })
 
-// accountRoute.post("/resetPassword",function(req,res)
-// {
-//   // console.log(req.body.email);
-//    var mailOptions = {
-//     from: 'dreamleage1999@gmail.com', // sender address
-//     to: req.body.email, // list of receivers
-//     subject: "Thông báo reset mật khẩu", // Subject line
-//     text: "Tài khoản bạn đã được reset mậu khẩu là: 77779999", // plaintext body
-// };
-//      var bcrypt = require('bcryptjs');
-//       var salt=bcrypt.genSaltSync(10);
-//     var newPW=bcrypt.hashSync('77779999',salt)+salt;
+accountRoute.post("/resetPassword", function (req, res) {
+    // console.log(req.body.email);
+    var mailOptions = {
+        from: 'dreamleage1999@gmail.com', // sender address
+        to: req.body.email, // list of receivers
+        subject: "Thông báo reset mật khẩu", // Subject line
+        text: "Tài khoản bạn đã được reset mậu khẩu là: 77779999", // plaintext body
+    };
+    var bcrypt = require('bcryptjs');
+    var salt = bcrypt.genSaltSync(10);
+    var newPW = bcrypt.hashSync('77779999', salt) + salt;
 
-//     newPW=newPW.replace(/&#x2F;/g,"/");
-//     var pw = {
-//         id: req.body.email,
-//         newPW: newPW
-//     };
+    newPW = newPW.replace(/&#x2F;/g, "/");
+    var pw = {
+        id: req.body.email,
+        newPW: newPW
+    };
 
-//     var smtpTransport = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.gmail_auth,
-//             pass: process.env.password_auth
-//         }
+    var smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.gmail_auth,
+            pass: process.env.password_auth
+        }
 //     });
 
 //     account.setNewPass(pw).then(function(result) {
