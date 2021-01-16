@@ -50,24 +50,21 @@ accountRoute.get('/login', function (req, res) {
     }
 });
 
-// accountRoute.post('/login', async function(req, res) {
+accountRoute.post('/login', async function (req, res) {
 
-//     const temp=await account.loadAccountbyEmail(req.body.email);
-//     var bcrypt = require('bcryptjs');
-//       var salt;
-//       if(temp!=null)
-//       {
-//          salt = temp.matkhau.substring(temp.matkhau.length-29);
-//          if(salt.search(";")!=-1)
-//          {
-//              salt=temp.matkhau.substring(temp.matkhau.length-34);
-//          }
-//       }
-//       else
-//       {
-//         salt=bcrypt.genSaltSync(10);
-//       }
-//     salt=salt.replace(/&#x2F;/g,"/");
+    const temp = await account.loadAccountbyEmail(req.body.email);
+    var bcrypt = require('bcryptjs');
+    var salt;
+    if (temp != null) {
+        salt = temp.matkhau.substring(temp.matkhau.length - 29);
+        if (salt.search(";") != -1) {
+            salt = temp.matkhau.substring(temp.matkhau.length - 34);
+        }
+    }
+    else {
+        salt = bcrypt.genSaltSync(10);
+    }
+    salt = salt.replace(/&#x2F;/g, "/");
 
 //     var ePWD = bcrypt.hashSync(req.body.password,salt)+salt;
 //      ePWD=ePWD.replace(/&#x2F;/g,"/");
