@@ -60,5 +60,62 @@ managerRoute.get('/account', function (req, res) {
 
 
 });
+managerRoute.post('/account/reset', function (req, res) {
+    var bcrypt = require('bcryptjs');
+    var salt = bcrypt.genSaltSync(10);
+    var ePWD = bcrypt.hashSync(process.env.password_hash, salt) + salt;
+    while (ePWD.search(';') != -1) {
+        salt = bcrypt.genSaltSync(10);
+        ePWD = bcrypt.hashSync(process.env.password_hash, salt) + salt;
+    }
+    ePWD = ePWD.replace(/&#x2F;/g, "/");
+    var entity = {
+        id: req.body.accId,
+        pass: ePWD
+    };
+    var smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.gmail_auth,
+            pass: process.env.password_auth
+        }
+    });
+    account.reset(entity).then(function (affectedRows) {
+        account.getEmailById(req.body.accId).then(function (row) {
+            console.log(row);
+            var mailOptions = {
+                from: 'dreamleage1999@gmail.com', // sender address
+                to: row.email, // list of receivers
+                subject: "Thông báo reset mật khẩu", // Subject line
+                text: "Tài khoản bạn đã được reset mậu khẩu là: 77779999", // plaintext body
+            };
+            //console.log(mailOptions.to);
+
+            smtpTransport.sendMail(mailOptions, function (error, response) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("Message sent: " + response.message);
+                }
+
+                // if you don't want to use this transport object anymore, uncomment following line
+                //smtpTransport.close(); // shut down the connection pool, no more messages
+            });
+            // req.session.errorMsg="Reset mật khẩu thành công.Vui lòng kiểm tra email";
+            // res.redirect('/manager/account');
+            account.loadAll().then(function (rows) {
+                res.render('manager/account/index', {
+                    layoutModels: res.locals.layoutModels,
+                    accounts: rows,
+                    errorMsg: "Reset mật khẩu thành công.Vui lòng kiểm tra email"
+                });
+                delete req.session.errorMsg;
+            });
+        });
+
+    });
+
+});
+
 
 module.exports = managerRoute;
