@@ -226,52 +226,49 @@ accountRoute.get('/changePassword', restrict, function (req, res) {
     });
 });
 
-// accountRoute.post('/changePassword', restrict, async function(req, res) {
-//     const temp=await account.loadAccountbyEmail(res.locals.layoutModels.account.email);
-//       var bcrypt = require('bcryptjs');
-//       var salt;
-//       if(temp!=null)
-//       {
-//          salt = temp.matkhau.substring(temp.matkhau.length-29);
-//          if(salt.search(";")!=-1)
-//          {
-//             salt = temp.matkhau.substring(temp.matkhau.length-34);
-//          }
-//       }
-//       else
-//       {
-//         salt=bcrypt.genSaltSync(10);
-//       }
-//      salt=salt.replace(/&#x2F;/g,"/");
-//     //console.log(req.body.oldPW,req.body.newPW,res.locals.layoutModels.account.id);
-//     var oldPW=bcrypt.hashSync(req.body.oldPW,salt)+salt;
-//     var newPW=bcrypt.hashSync(req.body.newPW,salt)+salt;
-//     oldPW=oldPW.replace(/&#x2F;/g,"/");
-//     newPW=newPW.replace(/&#x2F;/g,"/");
-//     var pw = {
-//         id: res.locals.layoutModels.account.id,
-//         oldPW:oldPW ,
-//         newPW: newPW
-//     };
-//     //console.log(pw);
-//     account.updatePassword(pw).then(function(result) {
-//         if (result == 1) {
-//             res.render('account/changePassword', {
-//                 layoutModels: res.locals.layoutModels,
-//                 successMsg: true,
-//                 errorMsg: 'Mật khẩu đã được thay đổi thành công.'
-//             });
-//         } else {
-//             res.render('account/changePassword', {
-//                 layoutModels: res.locals.layoutModels,
-//                 failMsg: true,
-//                 errorMsg: 'Mật khẩu cũ không khớp. Vui lòng nhập lại'
-//             });
-//         }
+accountRoute.post('/changePassword', restrict, async function (req, res) {
+    const temp = await account.loadAccountbyEmail(res.locals.layoutModels.account.email);
+    var bcrypt = require('bcryptjs');
+    var salt;
+    if (temp != null) {
+        salt = temp.matkhau.substring(temp.matkhau.length - 29);
+        if (salt.search(";") != -1) {
+            salt = temp.matkhau.substring(temp.matkhau.length - 34);
+        }
+    }
+    else {
+        salt = bcrypt.genSaltSync(10);
+    }
+    salt = salt.replace(/&#x2F;/g, "/");
+    //console.log(req.body.oldPW,req.body.newPW,res.locals.layoutModels.account.id);
+    var oldPW = bcrypt.hashSync(req.body.oldPW, salt) + salt;
+    var newPW = bcrypt.hashSync(req.body.newPW, salt) + salt;
+    oldPW = oldPW.replace(/&#x2F;/g, "/");
+    newPW = newPW.replace(/&#x2F;/g, "/");
+    var pw = {
+        id: res.locals.layoutModels.account.id,
+        oldPW: oldPW,
+        newPW: newPW
+    };
+    //console.log(pw);
+    account.updatePassword(pw).then(function (result) {
+        if (result == 1) {
+            res.render('account/changePassword', {
+                layoutModels: res.locals.layoutModels,
+                successMsg: true,
+                errorMsg: 'Mật khẩu đã được thay đổi thành công.'
+            });
+        } else {
+            res.render('account/changePassword', {
+                layoutModels: res.locals.layoutModels,
+                failMsg: true,
+                errorMsg: 'Mật khẩu cũ không khớp. Vui lòng nhập lại'
+            });
+        }
 
-//     });
+    });
 
-// });
+});
 
 // accountRoute.get('/', restrict, function(req, res) {
 
