@@ -117,5 +117,38 @@ managerRoute.post('/account/reset', function (req, res) {
 
 });
 
+managerRoute.post('/account/delete', async function (req, res) {
+    var entity = {
+        id: req.body.accId
+    };
+    //console.log(entity);
+    var check = await account.isDebt(parseInt(req.body.accId));
+    if (check != 1) {
+        var res1 = await account.delete(entity);
+        account.loadAll().then(function (rows) {
+            res.render('manager/account/index', {
+                layoutModels: res.locals.layoutModels,
+                accounts: rows,
+                errorMsg: "Xóa tài khoản thành công"
+            });
+            delete req.session.errorMsg;
+        });
+    }
+    else {
+        // req.session.errorMsg="Tài khoản đang có lịch đặt vé";
+        // res.redirect('/manager/account');
+        account.loadAll().then(function (rows) {
+            res.render('manager/account/index', {
+                layoutModels: res.locals.layoutModels,
+                accounts: rows,
+                errorMsg: "Tài khoản đang có lịch đặt vé"
+            });
+            delete req.session.errorMsg;
+        });
+    }
+
+
+});
+
 
 module.exports = managerRoute;
