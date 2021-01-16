@@ -313,34 +313,35 @@ accountRoute.post("/resetPassword", function (req, res) {
             user: process.env.gmail_auth,
             pass: process.env.password_auth
         }
-//     });
+    });
 
-//     account.setNewPass(pw).then(function(result) {
+    account.setNewPass(pw).then(function (result) {
 
-//         if (result>0) {
+        if (result > 0) {
 
 
-//             res.render('account/rePass', {
-//                 layoutModels: res.locals.layoutModels,
-//                 showError: true,
-//                 errorMsg: 'Thông tin mật khẩu reset đã gởi về email'
-//             });
-//             smtpTransport.sendMail(mailOptions, function(error, response) {
-//                 if (error) {
-//                     console.log(error);
-//                 } else {
-//                     console.log("Message sent: " + response.message);
-//                 }});
-//         } else {
-//             res.render('account/rePass', {
-//                 layoutModels: res.locals.layoutModels,
-//                 showError: true,
-//                 errorMsg: 'Tài khoản email không tồn tại'
-//             });
-//         }
+            res.render('account/rePass', {
+                layoutModels: res.locals.layoutModels,
+                showError: true,
+                errorMsg: 'Thông tin mật khẩu reset đã gởi về email'
+            });
+            smtpTransport.sendMail(mailOptions, function (error, response) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("Message sent: " + response.message);
+                }
+            });
+        } else {
+            res.render('account/rePass', {
+                layoutModels: res.locals.layoutModels,
+                showError: true,
+                errorMsg: 'Tài khoản email không tồn tại'
+            });
+        }
 
-//     });
-// })
+    });
+})
 
 // accountRoute.get("/response",restrict,function(req,res)
 // {
