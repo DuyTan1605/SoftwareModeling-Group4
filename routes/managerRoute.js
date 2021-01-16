@@ -37,5 +37,28 @@ const storage = multer.diskStorage({
     }
 })
 
+const helpers = require('handlebars-helpers');
+const accountRoute = require('./accountRoute.js');
+// const { delete } = require('../app-helpers/dbHelper.js');
+
+var upload = multer({ storage: storage });
+var managerRoute = express.Router();
+
+managerRoute.get("/", function (req, res) {
+    res.render("manager/index");
+})
+
+managerRoute.get('/account', function (req, res) {
+    account.loadAll().then(function (rows) {
+        res.render('manager/account/index', {
+            layoutModels: res.locals.layoutModels,
+            accounts: rows,
+            errorMsg: req.session.errorMsg
+        });
+        delete req.session.errorMsg;
+    });
+
+
+});
 
 module.exports = managerRoute;
