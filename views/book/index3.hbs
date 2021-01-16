@@ -1,0 +1,151 @@
+{{#section 'css'}}
+    {{!-- <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+     <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css"> 
+    <link href="/assets/css/docs.css" rel="stylesheet"> --}}
+     
+      <style>
+          .main-book{
+              display: flex;
+              flex-direction: row;
+          }
+          .flex-left{
+              flex:0 1 65%;
+              color:white;
+              padding:0px;
+          }
+          .flex-right{
+              flex:0 1 30%;
+              color:white;
+              margin-left:2%;
+              border:1px solid red;
+              background: black;
+          }
+          .img-book{
+              width:100%;
+              height:400px
+          }
+          .title{
+              color:yellow;
+              font-weight: bold;
+          }
+          .ticket-table{
+              width:100%
+          }
+          .content
+            {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            }
+</style>
+{{/section}}
+{{#section 'js'}}
+ <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script>
+    <script>
+
+        $(document).ready(function()
+        {
+           
+        function loadData()
+           {
+                let arr_choices=JSON.parse(sessionStorage.getItem("arr_choices"));
+               let arr_seats=sessionStorage.getItem("arr_seats").split(" ");
+              
+               let html='';
+               let html1='';
+               let sum=0;
+               let seat=0;
+              
+               for(let i=0;i<arr_choices.length;i++)
+               {
+                   html+=arr_choices[i].sum/arr_choices[i].price+' '+arr_choices[i].name+(i==arr_choices.length-1?'':' + ');
+                   sum+=arr_choices[i].sum;
+                   if(arr_choices[i].type==1)
+                   {
+                       seat+=arr_choices[i].sum/arr_choices[i].price;
+                   }
+               }
+               
+               for(let j=0;j<arr_seats.length;j++)
+               {
+                   html1+=arr_seats[j];
+               }
+               $("#arr_choices_display").html(html);
+                $("#arr_seats_display").html(html1);
+               $("#sum_price_display").html(sum+" VNĐ");
+
+                 $("#arr_seats").val(html1);
+                $("#arr_choices").val(html);
+                $("#sum_prices").val(sum);
+                 $("#sum_tickets").val(arr_seats.length);
+           }
+           loadData();
+           
+        })
+         $("#verify").on("click",function()
+        {
+            $("#positive_points").val(parseInt($("#positive_points").val())+1);
+            sessionStorage.clear();
+        });
+        $("#backStep2").on("click",function()
+        {
+            window.history.back();
+        })
+        $("#usePositivePoint").on("click",function()
+        {
+            if(parseInt($("#positive_points").val())>5)
+            {
+                console.log("OK");
+                let temp=parseInt($("#sum_prices").val())-10000;
+                let temp1=parseInt($("#positive_points").val())-5;
+                $("#sum_price_display").html(temp +"VNĐ");
+                 $("#sum_prices").val(temp);
+                  $("#positive_points").val(temp1);
+                $("#positive_points_display").html(temp1);
+            }
+        })
+    </script>
+{{/section}}
+<div class="container">
+  <form method="POST">
+<div class="main-book">
+    <div class="flex-left">
+     
+           <input name="idAccount" type="hidden" value="{{layoutModels.account.id}}">
+            <input name="arr_seats" type="hidden" id="arr_seats">
+            <input name="film_id" type="hidden" value="{{film.idphim}}">
+            <input name="room_id" type="hidden" value="{{film.idphongchieu}}">
+            <input name="arr_choices" type="hidden" id="arr_choices">
+             <input name="sum_prices" type="hidden" id="sum_prices">
+             <input name="date_show" type="hidden" value="{{film.ngaychieu}}">
+             <input name="time_show" type="hidden" value="{{film.giochieu}}">
+             <input name="date_book" type="hidden" value="{{#now}}{{/now}}">
+              <input name="sum_tickets" type="hidden" id="sum_tickets">
+              <input name="positive_points" id="positive_points" type="hidden" value={{layoutModels.account.positivepoint}}>
+              <h3>THÔNG TIN TÀI KHOẢN</h3>
+              <div>Họ tên: {{layoutModels.account.name}}</div>
+              <div>Điểm cộng: <span id="positive_points_display">{{layoutModels.account.positivepoint}}</span></div>
+               <div class="btn btn-danger" id="backStep2">TRỞ LẠI</div>
+                <div class="btn btn-primary" id="usePositivePoint">DÙNG ĐIỂM CỘNG</div>
+                 <input class="btn btn-success" id="verify" type="submit" value="XÁC NHẬN"></input>
+    </div>
+
+    <div class="">
+
+    </div>
+    <div class="flex-right">
+        <img src="{{film.hinhanh}}" class="img-book">
+        <div>
+            <h3 id="film_name">{{film.tenphim}}</h3>
+            <div id="theater_name">Rạp: {{film.tenkhuvuc}} - {{film.tenrap}} - {{film.tenphongchieu}}</div>
+             <div id="time-show">Thời gian:{{film.ngaychieu}} - {{film.giochieu}} </div>
+            <div>Lựa chọn:<span id="arr_choices_display"></span></div>
+              <div>Ghế ngồi:<span id="arr_seats_display"></span></div>
+            <div>Tổng: <span id="sum_price_display">0 VNĐ</span> </div>
+           
+              
+        </div>
+    </div>
+</div>
+</form>
+</div>
