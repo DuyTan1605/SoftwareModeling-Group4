@@ -34,7 +34,80 @@
     }
     </style>
 {{/section}}
+{{#section 'js'}}
+    <script type="text/javascript" src="/assets/bootstrap-4.3.1-dist/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="/assets/jquery-validation-1.12.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+    $('.form_date').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+    $('#formInfo').validate({
+        ignore: ".ignore",
+        rules: {
+            name: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            dob: {
+                required: true
+            },
 
+            radioGender: {
+                required: true
+            },
+            phone:{
+                required: true
+            }
+        },
+
+        messages: {
+            name: {
+                required: 'Vui lòng nhập họ tên'
+            },
+            email: {
+                required: 'Vui lòng nhập email',
+                email: 'EMail không đúng định dạng'
+            },
+            dob: {
+                required: 'Vui lòng chọn ngày sinh'
+            },
+            radioGender: {
+                required: 'Vui lòng chọn giới tính của bạn'
+            },
+            phone: {
+                required: 'Vui lòng nhập số điện thoại'
+            }
+        },
+
+        errorElement: 'span',
+        errorClass: 'help-block',
+
+        highlight: function(element) {
+            $(element)
+                .closest('.form-group')
+                .addClass('has-error');
+        },
+
+        success: function(label) {
+            $(label)
+                .closest('.form-group')
+                .removeClass('has-error');
+
+            label.remove();
+        },
+    });
+    </script>
+{{/section}}
 <div class="container">
     <div class="panel panel-default" style="border-color: white;">
         <div class="panel-heading" style="background-color: rgb(255, 51, 153); color:#fff">
