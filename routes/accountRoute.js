@@ -66,12 +66,12 @@ accountRoute.post('/login', async function (req, res) {
     }
     salt = salt.replace(/&#x2F;/g, "/");
 
-//     var ePWD = bcrypt.hashSync(req.body.password,salt)+salt;
-//      ePWD=ePWD.replace(/&#x2F;/g,"/");
-//      var entity = {
-//         email: req.body.email,
-//         password: ePWD,
-//     };
+    var ePWD = bcrypt.hashSync(req.body.password, salt) + salt;
+    ePWD = ePWD.replace(/&#x2F;/g, "/");
+    var entity = {
+        email: req.body.email,
+        password: ePWD,
+    };
 
 //     var remember = req.body.remember=="on" ? true : false;
 //     //console.log("Remember "+ remember);
