@@ -73,64 +73,63 @@ accountRoute.post('/login', async function (req, res) {
         password: ePWD,
     };
 
-//     var remember = req.body.remember=="on" ? true : false;
-//     //console.log("Remember "+ remember);
-//     console.log(entity.password);
-//     account.login(entity)
-//         .then(function(account) {
-//             console.log("acccount is");
-//             console.log(account);
-//             if (account === null) {
-//                 res.render('account/login', {
-//                     layoutModels: res.locals.layoutModels,
-//                     showError: true,
-//                     errorMsg: 'Thông tin đăng nhập không đúng.'
-//                 });
-//             } else {
-//                 //account.dob = moment(account.dob, 'YYYY-MM-DDTHH:mm').format('DD-MM-YYYY');
-//                 req.session.isLogged = true;
-//                 req.session.account = account;
-//                 //req.session.cart = [];
+    var remember = req.body.remember == "on" ? true : false;
+    //console.log("Remember "+ remember);
+    console.log(entity.password);
+    account.login(entity)
+        .then(function (account) {
+            console.log("acccount is");
+            console.log(account);
+            if (account === null) {
+                res.render('account/login', {
+                    layoutModels: res.locals.layoutModels,
+                    showError: true,
+                    errorMsg: 'Thông tin đăng nhập không đúng.'
+                });
+            } else {
+                //account.dob = moment(account.dob, 'YYYY-MM-DDTHH:mm').format('DD-MM-YYYY');
+                req.session.isLogged = true;
+                req.session.account = account;
+                //req.session.cart = [];
 
-//                  if (remember == true) {
-//                     var hour =3600000;
-//                    req.session.cookie.expires = new Date(Date.now() + hour);
-//                    req.session.cookie.maxAge = hour;
-//                 }
-//             //    if(account.status!=0)
-//             //    {
-//                 var url = '/home';
-//                 //console.log(req.query.retUrl);
-//                 if (req.query.retUrl) {
-//                     url = req.query.retUrl;
-//                 }
-//                 if(req.session.account.permission>1)
-//                 {
-//                     url='/manager';
-//                 }
-//                 res.redirect(url);
+                if (remember == true) {
+                    var hour = 3600000;
+                    req.session.cookie.expires = new Date(Date.now() + hour);
+                    req.session.cookie.maxAge = hour;
+                }
+                //    if(account.status!=0)
+                //    {
+                var url = '/home';
+                //console.log(req.query.retUrl);
+                if (req.query.retUrl) {
+                    url = req.query.retUrl;
+                }
+                if (req.session.account.permission > 1) {
+                    url = '/manager';
+                }
+                res.redirect(url);
 
-//             }
-//         });
+            }
+        });
 
 
-// });
+});
 
-// accountRoute.post('/logout', restrict, function(req, res) {
-//     req.session.isLogged = false;
-//     req.session.account = null;
-//     req.session.cookie.expires = new Date(Date.now() - 1000);
-//     //console.log(req.session);
-//     res.redirect(req.headers.referer);
-// });
+accountRoute.post('/logout', restrict, function (req, res) {
+    req.session.isLogged = false;
+    req.session.account = null;
+    req.session.cookie.expires = new Date(Date.now() - 1000);
+    //console.log(req.session);
+    res.redirect(req.headers.referer);
+});
 
-// accountRoute.get('/register', function(req, res) {
-//     res.render('account/register', {
-//         layoutModels: res.locals.layoutModels,
-//         showError: false,
-//         errorMsg: ''
-//     });
-// });
+accountRoute.get('/register', function (req, res) {
+    res.render('account/register', {
+        layoutModels: res.locals.layoutModels,
+        showError: false,
+        errorMsg: ''
+    });
+});
 
 // accountRoute.post('/register', function(req, res) {
 
