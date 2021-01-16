@@ -343,24 +343,21 @@ accountRoute.post("/resetPassword", function (req, res) {
     });
 })
 
-// accountRoute.get("/response",restrict,function(req,res)
-// {
-//     res.render("account/response");
-// })
-// accountRoute.post("/response",restrict,function(req,res)
-// {
-//     var currentdate = new Date();
-//     var datetime = currentdate.getDate() + "/" + (currentdate.getMonth()+1)
-//     + "/" + currentdate.getFullYear() + " - " 
-//     + currentdate.getHours() + ":" 
-//     + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-//     console.log(datetime);
-//     account.insertResponse(res.locals.layoutModels.account.id,req.body.contentResponse,datetime);
-//     res.render("account/sendSuccess");
-// })
-// accountRoute.get("/listresponse",restrict,async function(req,res)
-// {
-//     var listResponse=await account.loadAllResponse(res.locals.layoutModels.account.id);
-//     res.render("account/listresponse",{historyList:listResponse});
-// })
-// module.exports = accountRoute;
+accountRoute.get("/response", restrict, function (req, res) {
+    res.render("account/response");
+})
+accountRoute.post("/response", restrict, function (req, res) {
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "/" + (currentdate.getMonth() + 1)
+        + "/" + currentdate.getFullYear() + " - "
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+    console.log(datetime);
+    account.insertResponse(res.locals.layoutModels.account.id, req.body.contentResponse, datetime);
+    res.render("account/sendSuccess");
+})
+accountRoute.get("/listresponse", restrict, async function (req, res) {
+    var listResponse = await account.loadAllResponse(res.locals.layoutModels.account.id);
+    res.render("account/listresponse", { historyList: listResponse });
+})
+module.exports = accountRoute;
