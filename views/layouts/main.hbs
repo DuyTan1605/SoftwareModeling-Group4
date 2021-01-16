@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Website</title>
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap-3.4.1-dist/css/bootstrap.min.css">
+   <script src="/assets/font-awesome-5.11.2/js/symbol.js"></script>
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css"> 
+      <script src="/assets/js/redefine/jquery-1.11.1.min.js"></script>
+      {{!-- <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+    <script type="text/javascript" src="/assets/bootstrap-3.4.1-dist/js/bootstrap.min.js"></script>
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" />
+    
+    
+   {{{_sections.css}}}
+</head>
+ 
+<style>
+   
+    
+    
+</style>
+<body>
+    
+     {{> header1}}
+    
+     
+    <form id="frmLogout" method="post" action="/account/logout"></form>
+     <div class="container" style="max-width: none!important; margin-right: auto; margin-left: auto;min-height:50vh">
+         
+           {{{body}}}
+        
+        
+    </div> 
+    {{>footer}}
+
+    
+    
+   
+    <script type="text/javascript">
+    $('#logoutLink').on('click', function() {
+        $('#frmLogout').submit();
+    });
+    $(document).ready(function(e) {
+        $('.search-panel .dropdown-menu').find('a').click(function(e) {
+            e.preventDefault();
+            var param = $(this).attr("href").replace("#", "");
+            var concept = $(this).text();
+            $('.search-panel span#search-concept').text(concept);
+            $('.input-group #search-param').val(param);
+        });
+    });
+
+    </script>
+    {{{_sections.js}}}
+</body>
+
+</html>
