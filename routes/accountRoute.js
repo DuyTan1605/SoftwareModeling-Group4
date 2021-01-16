@@ -270,12 +270,12 @@ accountRoute.post('/changePassword', restrict, async function (req, res) {
 
 });
 
-// accountRoute.get('/', restrict, function(req, res) {
+accountRoute.get('/', restrict, function (req, res) {
 
-//     res.render('account/profile', {
-//         layoutModels: res.locals.layoutModels
-//     });
-// });
+    res.render('account/profile', {
+        layoutModels: res.locals.layoutModels
+    });
+});
 
 // accountRoute.get("/historyBooking",restrict,async function(req,res){
 //     var historyList=await account.loadHistoryBooking(res.locals.layoutModels.account.id);
