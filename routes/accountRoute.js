@@ -220,11 +220,11 @@ accountRoute.get('/profile', restrict, async function (req, res) {
     });
 });
 
-// accountRoute.get('/changePassword', restrict, function(req, res) {
-//     res.render('account/changePassword', {
-//         layoutModels: res.locals.layoutModels
-//     });
-// });
+accountRoute.get('/changePassword', restrict, function (req, res) {
+    res.render('account/changePassword', {
+        layoutModels: res.locals.layoutModels
+    });
+});
 
 // accountRoute.post('/changePassword', restrict, async function(req, res) {
 //     const temp=await account.loadAccountbyEmail(res.locals.layoutModels.account.email);
