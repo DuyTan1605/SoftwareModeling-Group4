@@ -27,3 +27,53 @@
 }
     </style>
 {{/section}}
+{{#section 'js'}}
+    <script type="text/javascript" src="/assets/js/datatables/jquery-3.5.1.js"></script>
+     <script type="text/javascript" src="/assets/js/datatables/jquery.dataTable.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/dataTable.boostrap4.min.js"></script>
+       <script>
+           $(document).ready(function() {
+                $('#example').DataTable({
+                    "scrollX": true
+                });
+            } );
+       </script>
+{{/section}}
+<div class="container">
+<table id="example" class="table table-striped table-bordered" style="width:100%;">
+        <thead>
+            <tr>
+                <th scope="col">Ngày đặt</th>
+                <th scope="col">Tên phòng</th>
+                <th scope="col">Rạp</th>
+                <th scope="col">Khu vực</th>
+                <th scope="col">Phim</th>
+                <th scope="col">Ngày chiếu</th>
+                <th scope="col">Giờ chiếu</th>
+                <th scope="col">Tổng tiền</th>
+                <th scope="col">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+             {{#each historyList}}
+                <tr>
+                <td>{{ngaydatve}}</td>
+                <td>{{tenphongchieu}}</td>
+                <td>{{tenrap}}</td>
+                <td>{{tenkhuvuc}}</td>
+                <td>{{tenphim}}</td>
+                <td>{{ngaychieu}}</td>
+                <td>{{giochieu}}</td>
+                <td>{{tongtien}}</td>
+                {{#isEqual tinhtrang 0}}
+                <td style="background:red;">Chưa xác nhận</td>
+                    {{else}}
+                <td style="background:green;">Đã xác nhận</td>
+                {{/isEqual}}
+                </tr>
+
+            {{/each}}
+        </tbody>
+        
+</table>
+</div>
