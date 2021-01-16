@@ -478,5 +478,73 @@ managerRoute.post('/editEvent', function (req, res) {
 
 })
 
+managerRoute.post("/event/delete", async function (req, res) {
+    var isPresentEvent = await eventModel.isPresent(parseInt(req.body.eventId));
+    console.log(film.isPresentEvent);
+    if (isPresentEvent) {
+        // req.session.errorDelete = 'Sự kiện đang diễn ra';
+        // res.redirect('/manager/event');
+        var listEvents = await eventModel.getAllEvents();
+        res.render('manager/event/index', { listEvents: listEvents, errorDelete: 'Sự kiện đang diễn ra' });
+    }
+    else {
+        var delEvent = await eventModel.deleteEventById(parseInt(req.body.eventId));
+        // req.session.errorDelete = 'Xóa sự kiện thành công';
+        // res.redirect('/manager/event');
+        var listEvents = await eventModel.getAllEvents();
+        res.render('manager/event/index', { listEvents: listEvents, errorDelete: 'Xóa sự kiện thành công' });
+    }
+});
+
+managerRoute.get("/addEvent", function (req, res) {
+    res.render("manager/event/add");
+})
+
+managerRoute.post("/addEvent", function (req, res) {
+    const upload1 = multer({ storage }).single('eventImage');
+    var temp;
+    upload1(req, res, function (err) {
+        if (err) {
+            return res.send(err)
+        }
+        console.log('file uploaded to server')
+        console.log(req.file)
+
+        // SEND FILE TO CLOUDINARY
+
+
+        const path = req.file.path
+        const uniqueFilename = new Date().toISOString()
+
+        cloudinary.uploader.upload(
+            path,
+            { public_id: `projectmovies/${uniqueFilename}`, tags: `projectmovies` }, // directory and tags are optional
+            async function (err, image) {
+                if (err) return res.send(err)
+                console.log('file uploaded to Cloudinary')
+                // remove file from server
+                const fs = require('fs')
+                fs.unlinkSync(path)
+                // return image details
+                //temp=res.json(image);
+                console.log("Temp is");
+                console.log(image);
+                var entity = {
+                    tensukien: req.body.eventName,
+                    ngaybatdau: req.body.dateStart,
+                    ngayketthuc: req.body.dateEnd,
+                    noidung: req.body.eventSummary,
+                    hinhanh: image.url
+                }
+                console.log(req.file);
+                console.log(entity);
+                var result = await eventModel.addNewEvent(entity);
+                res.render("manager/event/add", { errorAdd: "Thêm sự kiện thành công" });
+                delete req.session.errorAdd;
+            }
+        )
+    })
+});
+
 
 module.exports = managerRoute;
