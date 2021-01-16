@@ -150,5 +150,150 @@ managerRoute.post('/account/delete', async function (req, res) {
 
 });
 
+managerRoute.get('/film', async function (req, res) {
+    var filmList = await film.getFilm();
+    res.render('manager/film/index', { film: filmList });
+    //delete req.session.errorDelete;
+})
+managerRoute.get('/editFilm', async function (req, res) {
+    var detailFilm = await film.getFilmById(parseInt(req.query.id));
+    console.log(detailFilm);
+    var categories = await film.loadAllType();
+    for (let j = 0; j < categories.length; j++) {
+        categories[j].isChecked = 0;
+        for (let i = 0; i < detailFilm[0].arrFilmType.length; i++) {
+            if (detailFilm[0].arrFilmType[i] == categories[j].tentheloai) {
+                categories[j].isChecked = 1;
+            }
+        }
+    };
+    console.log(categories);
+    res.render('manager/film/edit', { film: detailFilm[0], categories: categories });
+})
+managerRoute.post('/editFilm', function (req, res) {
+    const upload1 = multer({ storage }).single('filmImage');
+    var temp;
+    upload1(req, res, async function (err) {
+        if (err) {
+            return res.send(err)
+        }
+        //   console.log('file uploaded to server')
+        //   console.log(req.file || "no")
+
+        // SEND FILE TO CLOUDINARY
+
+        if (!req.file) {
+            var entity = {
+                idphim: req.body.filmId,
+                tenphim: req.body.filmName.toUpperCase(),
+                theloai: req.body.filmType,
+                ngayphathanh: req.body.datePublic,
+                daodien: req.body.filmDirector,
+                dienvien: req.body.filmActor,
+                tomtat: req.body.filmSummary,
+                thoiluong: parseInt(req.body.filmDuration),
+                diemdanhgia: parseFloat(req.body.filmPoint),
+                hinhanh: req.body.temp_filmImage,
+                tinhtrang: parseInt(req.body.filmStatus),
+                khoichieu: req.body.dateShow,
+                linktrailer: req.body.filmTrailer
+            }
+            //console.log(entity);
+            var result = await film.updateInfoFilm(parseInt(req.body.filmId), entity);
+            var deleteRes = await film.deleteFilmType(req.body.filmId);
+            for (let i = 0; i < req.body.filmType.length; i++) {
+                var filmTypeRes = await film.addFilmType(req.body.filmId, parseInt(req.body.filmType[i]));
+            }
+            var categories = await film.loadAllType();
+            for (let j = 0; j < categories.length; j++) {
+                categories[j].isChecked = 0;
+                for (let i = 0; i < req.body.filmType.length; i++) {
+                    if (req.body.filmType[i] == categories[j].idtheloai) {
+                        categories[j].isChecked = 1;
+                    }
+                }
+            };
+            //console.log(result.changedRows>0);
+            if (result.changedRows > 0) {
+
+                res.render(`manager/film/edit`, { film: entity, errorEdit: "Cập nhật thông tin thành công", categories: categories });
+
+            }
+            else {
+
+                res.render(`manager/film/edit`, { film: entity, errorEdit: "Cập nhật thông tin thất bại", categories: categories });
+
+            }
+
+        }
+
+        const path = req.file.path;
+        const uniqueFilename = new Date().toISOString()
+
+        cloudinary.uploader.upload(
+            path,
+            { public_id: `projectmovies/${uniqueFilename}`, tags: `projectmovies` }, // directory and tags are optional
+            async function (err, image) {
+                if (err) return res.send(err)
+                console.log('file uploaded to Cloudinary')
+                // remove file from server
+                const fs = require('fs')
+                fs.unlinkSync(path)
+                // return image details
+                //temp=res.json(image);
+                console.log("Temp is");
+                console.log(image);
+
+                var entity = {
+                    idphim: req.body.filmId,
+                    tenphim: req.body.filmName.toUpperCase(),
+                    theloai: req.body.filmType,
+                    ngayphathanh: req.body.datePublic,
+                    daodien: req.body.filmDirector,
+                    dienvien: req.body.filmActor,
+                    tomtat: req.body.filmSummary,
+                    thoiluong: parseInt(req.body.filmDuration),
+                    diemdanhgia: parseFloat(req.body.filmPoint),
+                    hinhanh: image.url,
+                    tinhtrang: parseInt(req.body.filmStatus),
+                    khoichieu: req.body.dateShow,
+                    linktrailer: req.body.filmTrailer
+                }
+
+                var result = await film.updateInfoFilm(parseInt(req.body.filmId), entity);
+                var deleteRes = await film.deleteFilmType(req.body.filmId);
+                for (let i = 0; i < req.body.filmType.length; i++) {
+                    var filmTypeRes = await film.addFilmType(req.body.filmId, parseInt(req.body.filmType[i]));
+                }
+                var categories = await film.loadAllType();
+                for (let j = 0; j < categories.length; j++) {
+                    categories[j].isChecked = 0;
+                    for (let i = 0; i < req.body.filmType.length; i++) {
+                        if (req.body.filmType[i] == categories[j].idtheloai) {
+                            categories[j].isChecked = 1;
+                        }
+                    }
+                };
+                //console.log(result.changedRows>0);
+                if (result.changedRows > 0) {
+
+                    res.render(`manager/film/edit`, { film: entity, errorEdit: "Cập nhật thông tin thành công", categories: categories });
+
+                }
+                else {
+
+                    res.render(`manager/film/edit`, { film: entity, errorEdit: "Cập nhật thông tin thất bại", categories: categories });
+
+                }
+
+            }
+        )
+    })
+
+
+
+
+    // res.redirect('manager/film');
+})
 
 module.exports = managerRoute;
