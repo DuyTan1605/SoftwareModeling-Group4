@@ -70,5 +70,43 @@ filmRoute.get("/presentFilm", async function (req, res) {
         });
     });
 })
+filmRoute.get('/', async function (req, res) {
+    var films = await film.getFilm();
 
+    var presentFilm = films.filter(function (x) {
+        return x.tinhtrang == 0;
+    });
+    var futureFilm = films.filter(function (x) {
+        return x.tinhtrang == 1;
+    });
+
+    var total_present_film = presentFilm.length;
+    var total_future_film = futureFilm.length;
+    const size = 6;
+    var page_present_film = Math.ceil(total_present_film / size);
+    var page_future_film = Math.ceil(total_future_film / size);
+    var totalPagePresent = [];
+    for (let i = 1; i <= page_present_film; i++) {
+        totalPagePresent.push(i);
+    }
+    var totalPageFuture = [];
+    for (let i = 1; i <= page_future_film; i++) {
+        totalPageFuture.push(i);
+    }
+    // films=films.map(function(x)
+    // {
+    //     let temp=new Date(x.KhoiChieu);
+    //     x.KhoiChieu=temp.getDate()+'/'+(parseInt(temp.getMonth())+1)+'/'+temp.getFullYear();
+    //     return x;
+    // })
+    //console.log(futureFilm);
+    res.render('film/index', { totalPagePresent: totalPagePresent, totalPageFuture: totalPageFuture, presentFilm: encodeURIComponent(JSON.stringify(presentFilm)), futureFilm: encodeURIComponent(JSON.stringify(futureFilm)) });
+
+
+})
+filmRoute.get("/detail/:id", async function (req, res) {
+    var detailFilm = await film.getFilmById(req.params.id);
+
+    res.render("film/detail", { detailFilm: detailFilm[0] });
+})
 module.exports = filmRoute;
