@@ -296,4 +296,87 @@ managerRoute.post('/editFilm', function (req, res) {
     // res.redirect('manager/film');
 })
 
+managerRoute.get("/addFilm", async function (req, res) {
+    var categories = await film.loadAllType();
+    //console.log(listType[0]);
+    res.render("manager/film/add", { categories: categories });
+})
+managerRoute.post('/addFilm', function (req, res) {
+
+    const upload1 = multer({ storage }).single('filmImage');
+    var temp;
+    upload1(req, res, function (err) {
+        if (err) {
+            return res.send(err)
+        }
+        //   console.log('file uploaded to server')
+        //   console.log(req.file)
+
+        // SEND FILE TO CLOUDINARY
+
+
+        const path = req.file.path
+        const uniqueFilename = new Date().toISOString()
+        //console.log(path);
+        cloudinary.uploader.upload(
+            path,
+            { public_id: `projectmovies/${uniqueFilename}`, tags: `projectmovies` }, // directory and tags are optional
+            async function (err, image) {
+                if (err) return res.send(err)
+                console.log('file uploaded to Cloudinary')
+                // remove file from server
+                const fs = require('fs')
+                fs.unlinkSync(path)
+                // return image details
+                //temp=res.json(image);
+                //   console.log("Temp is");
+                //   console.log(image);
+                var entity = {
+                    tenphim: req.body.filmName.toUpperCase(),
+                    theloai: req.body.filmType,
+                    ngayphathanh: req.body.datePublic,
+                    daodien: req.body.filmDirector,
+                    dienvien: req.body.filmActor,
+                    tomtat: req.body.filmSummary,
+                    thoiluong: parseInt(req.body.filmDuration),
+                    diemdanhgia: parseFloat(req.body.filmPoint),
+                    hinhanh: image.url,
+                    tinhtrang: parseInt(req.body.filmStatus),
+                    khoichieu: req.body.dateShow,
+                    linktrailer: req.body.filmTrailer
+                }
+                //console.log(entity);
+                var categories = await film.loadAllType();
+                // console.log(entity);
+                var newFilm = await film.addNewFilm(entity);
+                var nowId = await helperModel.getMaxId();
+                // console.log("Now id"+nowId);
+                for (let i = 0; i < req.body.filmType.length; i++) {
+                    console.log(nowId, parseInt(req.body.filmType[i]));
+                    var filmTypeRes = await film.addFilmType(nowId, parseInt(req.body.filmType[i]));
+                }
+                res.render("manager/film/add", { categories: categories, errorAdd: "Thêm mới phim thành công" });
+                delete req.session.errorAdd;
+            }
+        )
+    })
+
+
+
+})
+managerRoute.post("/film/delete", async function (req, res) {
+    var isPresentFilm = await film.isPresent(parseInt(req.body.filmId));
+
+    if (isPresentFilm) {
+        var filmList = await film.getFilm();
+        //req.session.errorDelete = 'Phim đang nằm trong danh sách phim đang chiếu';
+        res.render('manager/film/index', { film: filmList, errorDelete: 'Phim đang nằm trong danh sách phim đang chiếu' });
+    }
+    else {
+        var delFilm = await film.deleteFilmById(parseInt(req.body.filmId));
+        var filmList = await film.getFilm();
+        res.render('manager/film/index', { film: filmList, errorDelete: "Xóa phim thành công" });
+    }
+})
+
 module.exports = managerRoute;
