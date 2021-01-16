@@ -175,29 +175,29 @@ accountRoute.post('/register', function (req, res) {
 });
 
 // //Thay đổi thông tin người dùng
-// accountRoute.post('/profile', function(req, res) {
-//     var dateOB = moment(req.body.dob, 'YYYY-MM-DD').format('YYYY-MM-DD');
-//     //console.log(dateOB);
-//     var entity = {
-//         id: req.body.id,
-//         name: req.body.name,
-//         gender: req.body.gender,
-//         dob: dateOB,
-//         address:req.body.address,
-//         phone:req.body.phone
-//     };
+accountRoute.post('/profile', function (req, res) {
+    var dateOB = moment(req.body.dob, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    //console.log(dateOB);
+    var entity = {
+        id: req.body.id,
+        name: req.body.name,
+        gender: req.body.gender,
+        dob: dateOB,
+        address: req.body.address,
+        phone: req.body.phone
+    };
 
-//     account.updateInfo(entity).then(function(account) {
-//         res.locals.layoutModels.account = account;
-//         req.session.account = account;
-//         //console.log(account);
-//         res.render('account/profile', {
-//             layoutModels: res.locals.layoutModels,
-//             showError: true,
-//             errorMsg: 'Cập nhật thông tin thành công'
-//         });
-//     });
-// });
+    account.updateInfo(entity).then(function (account) {
+        res.locals.layoutModels.account = account;
+        req.session.account = account;
+        //console.log(account);
+        res.render('account/profile', {
+            layoutModels: res.locals.layoutModels,
+            showError: true,
+            errorMsg: 'Cập nhật thông tin thành công'
+        });
+    });
+});
 
 // accountRoute.get('/profile', restrict, async function(req, res) {
 
