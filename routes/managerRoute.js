@@ -667,5 +667,299 @@ managerRoute.post("/addTicket", async function (req, res) {
 })
 
 
+managerRoute.get("/response", async function (req, res) {
+    var responses = await responseModel.getResponses();
+    console.log(responses);
+    res.render("manager/response/index", { responses: responses, errorResponse: req.session.errorResponse });
+    delete req.session.errorResponse;
+})
+managerRoute.post("/response", async function (req, res) {
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "/" + (currentdate.getMonth() + 1)
+        + "/" + currentdate.getFullYear() + " - "
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 
+    var entity = {
+        noidunghoidap: req.body.responseContent,
+        manguoiphanhoi: parseInt(res.locals.layoutModels.account.id),
+        thoigianhoidap: datetime
+    }
+    // console.log(req.body);
+    var result = await responseModel.updateResponse(parseInt(req.body.responseId), entity);
+    req.session.errorResponse = "Trả lời phản hồi thành công";
+    res.redirect("/manager/response");
+
+});
+
+managerRoute.get("/bookTicket", async function (req, res) {
+    var listBooking = await account.loadAllHistoryBooking();
+    //console.log(listBooking);
+    res.render("manager/historyBooking/index", { lists: listBooking, errorDelete: req.session.errorDelete });
+    delete req.session.errorDelete;
+})
+
+managerRoute.post("/book/delete", async function (req, res) {
+    var entity = {
+        idlichsudatve: req.body.serviceId,
+        tinhtrang: parseInt(req.body.serviceType) == 1 ? 0 : 1
+    }
+
+    var result = await bookModel.updateHistoryTicket(parseInt(req.body.serviceId), entity);
+    req.session.errorDelete = "Cập nhật trạng thái vé thành công";
+    res.redirect("/manager/bookTicket");
+})
+
+managerRoute.get("/timeShow", async function (req, res) {
+    var listShowTimes = await showTimeModel.getShowTime();
+    res.render("manager/timeShow/index", { listShowTimes: listShowTimes });
+    //delete req.session.errorDelete;
+})
+
+managerRoute.post("/showTime/delete", async function (req, res) {
+    var isReserved = await bookModel.isReservated(parseInt(req.body.showTimeId));
+    // console.log(isReserved);
+    if (isReserved) {
+        var listShowTimes = await showTimeModel.getShowTime();
+        res.render("manager/timeShow/index", { listShowTimes: listShowTimes, errorDelete: "Đã có khách hàng đặt lịch" });
+        // req.session.errorDelete="Đã có khách hàng đặt lịch";
+        // res.redirect("/manager/timeShow");
+    }
+    else {
+        var temp = await showTimeModel.deleteShowTimeDetail(parseInt(req.body.showTimeId));
+        var listShowTimes = await showTimeModel.getShowTime();
+        res.render("manager/timeShow/index", { listShowTimes: listShowTimes, errorDelete: "Xóa lịch chiếu thành công" });
+
+        // req.session.errorDelete="Xóa lịch chiếu thành công";
+        // res.redirect("/manager/timeShow");
+    }
+})
+managerRoute.get("/editShowTime", async function (req, res) {
+    console.log(parseInt(req.query.id));
+    var showTimeDetail = await showTimeModel.getShowTimeById(parseInt(req.query.id));
+
+    var listArea = await helperModel.getAllArea();
+    var listTheater = await helperModel.getListTheater();
+    var listRoom = await helperModel.getListRoom();
+
+    res.render("manager/timeShow/edit", { film: showTimeDetail[0], listArea: encodeURIComponent(JSON.stringify(listArea)), filmDetail: encodeURIComponent(JSON.stringify(showTimeDetail[0])), listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+    delete req.session.errorEdit;
+})
+managerRoute.post("/editShowTime", async function (req, res) {
+    //console.log(req.body);
+    var entity = {
+        idlichchieuphim: parseInt(req.body.showTimeId),
+        idphongchieu: parseInt(req.body.rooms),
+        ngaychieu: req.body.datePublic,
+        giochieu: req.body.appt
+
+    };
+    //  console.log(entity);
+    var result = await showTimeModel.editShowTimeDetail(entity);
+    var showTimeDetail = await showTimeModel.getShowTimeById(parseInt(entity.idlichchieuphim));
+
+    var listArea = await helperModel.getAllArea();
+    var listTheater = await helperModel.getListTheater();
+    var listRoom = await helperModel.getListRoom();
+
+    res.render("manager/timeShow/edit", { errorEdit: "Chỉnh sửa thông tin lịch chiếu thành công", film: showTimeDetail[0], listArea: encodeURIComponent(JSON.stringify(listArea)), filmDetail: encodeURIComponent(JSON.stringify(showTimeDetail[0])), listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+    delete req.session.errorEdit;
+    // req.session.errorEdit="Chỉnh sửa thông tin lịch chiếu thành công";
+    // res.redirect("/manager/editShowTime?id="+entity.idlichchieuphim);
+})
+managerRoute.get("/addShowTime", async function (req, res) {
+    var presentList = await helperModel.getPresentList();
+    var listArea = await helperModel.getAllArea();
+    var listTheater = await helperModel.getListTheater();
+    var listRoom = await helperModel.getListRoom();
+    res.render("manager/timeShow/add", { presentList: presentList, listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+    delete req.session.errorAdd;
+})
+
+managerRoute.post("/addShowTime", async function (req, res) {
+    var entity = {
+        idphim: parseInt(req.body.films),
+        ngaychieu: req.body.datePublic,
+        giochieu: req.body.appt,
+        idphongchieu: parseInt(req.body.rooms),
+    };
+    console.log(entity);
+    var isExists = await showTimeModel.isExistsShowTime(entity);
+
+    console.log(isExists);
+    if (isExists) {
+        var presentList = await helperModel.getPresentList();
+        var listArea = await helperModel.getAllArea();
+        var listTheater = await helperModel.getListTheater();
+        var listRoom = await helperModel.getListRoom();
+        res.render("manager/timeShow/add", { errorAdd: "Lịch chiếu đã tồn tại", presentList: presentList, listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+        // req.session.errorAdd="Lịch chiếu đã tồn tại";
+        // res.redirect("/manager/addShowTime");
+
+    }
+    else {
+        showTimeModel.addShowTime(entity);
+        var presentList = await helperModel.getPresentList();
+        var listArea = await helperModel.getAllArea();
+        var listTheater = await helperModel.getListTheater();
+        var listRoom = await helperModel.getListRoom();
+        res.render("manager/timeShow/add", { errorAdd: "Thêm lịch chiếu thành công", presentList: presentList, listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+        // req.session.errorAdd="Thêm lịch chiếu thành công";
+        // res.redirect("/manager/addShowTime");
+
+    }
+})
+managerRoute.get("/cinemaRoom", async function (req, res) {
+    var listCinemaRooms = await cinemaRoomModel.getCinemaRoom();
+    res.render("manager/cinemaRoom/index", { listCinemaRooms: listCinemaRooms });
+    delete req.session.errorDelete;
+
+})
+managerRoute.post("/cinemaRoom/delete", async function (req, res) {
+    var isExistCinemaRoom = await cinemaRoomModel.isExistCinemaRoom(parseInt(req.body.cinemaRoomId));
+    if (isExistCinemaRoom) {
+        var listCinemaRooms = await cinemaRoomModel.getCinemaRoom();
+        res.render("manager/cinemaRoom/index", { listCinemaRooms: listCinemaRooms, errorDelete: "Đã có khách hàng đặt lịch" });
+
+        // req.session.errorDelete="Đã có khách hàng đặt lịch";
+        // res.redirect("/manager/cinemaRoom");
+    }
+    else {
+        var res1 = await cinemaRoomModel.deleteCinemaRoomDetail(parseInt(req.body.cinemaRoomId));
+        var listCinemaRooms = await cinemaRoomModel.getCinemaRoom();
+        res.render("manager/cinemaRoom/index", { listCinemaRooms: listCinemaRooms, errorDelete: "Xóa phòng chiếu thành công" });
+        // req.session.errorDelete="Xóa phòng chiếu thành công";
+        // res.redirect("/manager/cinemaRoom");
+    }
+})
+managerRoute.get("/editCinemaRoom", async function (req, res) {
+
+    var cinemaRoomDetail = await cinemaRoomModel.getCinemaRoomById(parseInt(req.query.id));
+    var listRoom = await helperModel.getListRoomByName();
+    //console.log(cinemaRoomDetail,listRoom);
+    listRoom = listRoom.map(function (x) {
+        if (x.tenphongchieu == cinemaRoomDetail.tenphongchieu) {
+            return {
+                tenphongchieu: x.tenphongchieu,
+                checked: 1
+            };
+        }
+        return {
+            tenphongchieu: x.tenphongchieu,
+            checked: 0
+        };
+    })
+    //console.log(listRoom);
+    res.render('manager/cinemaRoom/edit', { cinemaRoom: cinemaRoomDetail, listRoom: listRoom });
+    delete req.session.errorEdit;
+})
+managerRoute.post('/editCinemaRoom', async function (req, res) {
+    var entity = {
+        tenkhuvuc: req.body.area,
+        tenrap: req.body.theater,
+        idphongchieu: req.body.RoomID,
+        tenphongchieu: req.body.rooms,
+        soluongghe: req.body.RoomChair,
+    }
+    var cinemaRoomDetail = await cinemaRoomModel.getCinemaRoomById(parseInt(entity.idphongchieu));
+    //console.log(entity);
+    var checkEdit = false;
+    if (cinemaRoomDetail.tenphongchieu != entity.tenphongchieu) {
+        var checkEdit = await cinemaRoomModel.checkEditCinemaRoom(entity);
+    }
+
+    //console.log(checkEdit);
+    if (checkEdit) {
+        var cinemaRoomDetail = await cinemaRoomModel.getCinemaRoomById(parseInt(req.body.RoomID));
+        var listRoom = await helperModel.getListRoomByName();
+        //console.log(cinemaRoomDetail,listRoom);
+        listRoom = listRoom.map(function (x) {
+            if (x.tenphongchieu == cinemaRoomDetail.tenphongchieu) {
+                return {
+                    tenphongchieu: x.tenphongchieu,
+                    checked: 1
+                };
+            }
+            return {
+                tenphongchieu: x.tenphongchieu,
+                checked: 0
+            };
+        })
+        res.render('manager/cinemaRoom/edit', { cinemaRoom: cinemaRoomDetail, listRoom: listRoom, errorEdit: "Phòng chiếu đã tồn tại" });
+    }
+    else {
+        var res1 = await cinemaRoomModel.updateInfoCinemaRoom(parseInt(req.body.RoomID), entity);
+        var cinemaRoomDetail = await cinemaRoomModel.getCinemaRoomById(parseInt(req.body.RoomID));
+        var listRoom = await helperModel.getListRoomByName();
+        //console.log(cinemaRoomDetail,listRoom);
+        listRoom = listRoom.map(function (x) {
+            if (x.tenphongchieu == cinemaRoomDetail.tenphongchieu) {
+                return {
+                    tenphongchieu: x.tenphongchieu,
+                    checked: 1
+                };
+            }
+            return {
+                tenphongchieu: x.tenphongchieu,
+                checked: 0
+            };
+        })
+        res.render('manager/cinemaRoom/edit', { cinemaRoom: cinemaRoomDetail, listRoom: listRoom, errorEdit: "Chỉnh sửa thông tin phòng chiếu thành công" });
+        // req.session.errorEdit="Chỉnh sửa thông tin phòng chiếu thành công";
+        // res.redirect("/manager/editCinemaRoom?id="+entity.idphongchieu);
+    }
+
+
+})
+managerRoute.get("/addCinemaRoom", async function (req, res) {
+
+    var listArea = await helperModel.getAllArea();
+    var listTheater = await helperModel.getListTheater();
+    var listRoom = await helperModel.getListRoomByName();
+    res.render("manager/CinemaRoom/add", { listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+    //delete req.session.errorAdd;
+})
+managerRoute.post("/addCinemaRoom", async function (req, res) {
+    var entity = {
+        idkhuvuc: req.body.areas,
+        idrap: req.body.theaters,
+        tenphongchieu: req.body.rooms,
+        soluongghe: req.body.RoomChair,
+    };
+    console.log(entity);
+    var isExists = await cinemaRoomModel.isExistsCinemaRoom(entity);
+
+    console.log(isExists);
+    if (isExists) {
+
+        var listArea = await helperModel.getAllArea();
+        var listTheater = await helperModel.getListTheater();
+        var listRoom = await helperModel.getListRoomByName();
+        res.render("manager/CinemaRoom/add", { errorAdd: "Phòng chiếu đã tồn tại", listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+    }
+    else {
+        cinemaRoomModel.addCinemaRoom(entity);
+        var listArea = await helperModel.getAllArea();
+        var listTheater = await helperModel.getListTheater();
+        var listRoom = await helperModel.getListRoomByName();
+        res.render("manager/CinemaRoom/add", { errorAdd: "Thêm phòng chiếu thành công", listArea: listArea, listTheater: encodeURIComponent(JSON.stringify(listTheater)), listRoom: encodeURIComponent(JSON.stringify(listRoom)) });
+
+    }
+})
+managerRoute.get("/report", async function (req, res) {
+    res.render("manager/report");
+})
+managerRoute.post("/report", async function (req, res) {
+    var filmRevenue = await reportModel.getFilmRevenue(req.body.years, req.body.months);
+    let totalRevenue = await reportModel.getTotalRevenue(req.body.years, req.body.months);
+    var arrModel = [];
+    var month = parseInt(req.body.years) == new Date().getFullYear() ? new Date().getMonth() + 1 : 12;
+
+    for (let i = 1; i <= month; i++) {
+        let temp = await reportModel.getTotalRevenue(req.body.years, i);
+        arrModel.push({ x: i, y: temp });
+    }
+    console.log(arrModel);
+    res.render("manager/report/revenue", { filmRevenue: filmRevenue, totalRevenue: totalRevenue, arrModel: encodeURIComponent(JSON.stringify(arrModel)) });
+})
 module.exports = managerRoute;
