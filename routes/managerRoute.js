@@ -546,5 +546,126 @@ managerRoute.post("/addEvent", function (req, res) {
     })
 });
 
+managerRoute.get("/service", async function (req, res) {
+    var listServices = await serviceModel.getListServices();
+    res.render("manager/service/index", { listServices: listServices, errorDelete: req.session.errorDelete });
+    delete req.session.errorDelete;
+});
+
+managerRoute.get("/ticket", async function (req, res) {
+    var listTickets = await ticketModel.getListTickets();
+    res.render("manager/ticket/index", { listTickets: listTickets, errorDelete: req.session.errorDelete });
+    delete req.session.errorDelete;
+});
+
+managerRoute.get("/editService", async function (req, res) {
+    var detailService = await serviceModel.getServiceById(parseInt(req.query.id));
+    res.render('manager/service/edit', { service: detailService });
+})
+
+
+managerRoute.post("/editService", async function (req, res) {
+    console.log(req.body);
+    var entity = {
+        iddichvu: req.body.serviceId,
+        tendichvu: req.body.serviceName,
+        gia: req.body.servicePrice
+    }
+    var result = await serviceModel.updateInfoService(parseInt(req.body.serviceId), entity);
+
+    if (result.changedRows > 0) {
+
+        res.render(`manager/service/edit`, { service: entity, errorEdit: "Cập nhật thông tin dịch vụ thành công" });
+
+    }
+    else {
+
+        res.render(`manager/service/edit`, { service: entity, errorEdit: "Cập nhật thông tin dịch vụ thất bại" });
+
+    }
+})
+
+
+managerRoute.get("/editTicket", async function (req, res) {
+    var detailTicket = await ticketModel.getTicketById(parseInt(req.query.id));
+    //console.log(detailTicket);
+    res.render('manager/ticket/edit', { ticket: detailTicket });
+})
+
+managerRoute.post("/editTicket", async function (req, res) {
+    console.log(req.body);
+    var entity = {
+        idve: req.body.ticketId,
+        tenve: req.body.ticketName,
+        giave: parseInt(req.body.ticketPrice)
+    }
+    var result = await ticketModel.updateInfoTicket(parseInt(req.body.ticketId), entity);
+
+    if (result.changedRows > 0) {
+
+        res.render(`manager/ticket/edit`, { ticket: entity, errorEdit: "Cập nhật thông tin vé thành công" });
+
+    }
+    else {
+
+        res.render(`manager/ticket/edit`, { ticket: entity, errorEdit: "Cập nhật thông tin vé thất bại" });
+
+    }
+})
+
+managerRoute.post("/service/delete", async function (req, res) {
+    var entity = {
+        iddichvu: req.body.serviceId,
+        tinhtrang: parseInt(req.body.serviceType) == 1 ? 0 : 1
+    }
+
+    var result = await serviceModel.updateStatusService(parseInt(req.body.serviceId), entity);
+    var services = await serviceModel.getListServices();
+    //req.session.errorDelete="Cập nhật trạng thái dịch vụ thành công";
+    res.render("manager/service/index", { errorDelete: "Cập nhật trạng thái dịch vụ thành công", listServices: services });
+})
+
+managerRoute.post("/ticket/delete", async function (req, res) {
+    var entity = {
+        idve: req.body.ticketId,
+        tinhtrang: parseInt(req.body.ticketType) == 1 ? 0 : 1
+    }
+
+    var result = await ticketModel.updateStatusTicket(parseInt(req.body.ticketId), entity);
+    var tickets = await ticketModel.getListTickets();
+    //req.session.errorDelete="Cập nhật trạng thái vé thành công";
+    res.render("manager/ticket/index", { errorDelete: "Cập nhật trạng thái vé thành công", listTickets: tickets });
+})
+
+
+managerRoute.get("/addService", function (req, res) {
+    res.render("manager/service/add", { errorAdd: req.session.errorAdd });
+})
+managerRoute.post("/addService", async function (req, res) {
+    var entity = {
+        tendichvu: req.body.serviceName,
+        gia: parseInt(req.body.servicePrice)
+    }
+    var result = await serviceModel.addNewService(entity);
+    res.render("manager/service/add", { errorAdd: "Thêm dịch vụ thành công" });
+    delete req.session.errorAdd;
+})
+
+managerRoute.get("/addTicket", function (req, res) {
+    res.render("manager/ticket/add", { errorAdd: req.session.errorAdd });
+})
+
+
+managerRoute.post("/addTicket", async function (req, res) {
+    var entity = {
+        tenve: req.body.ticketName,
+        gia: parseInt(req.body.ticketPrice)
+    }
+    var result = await ticketModel.addNewTicket(entity);
+    res.render("manager/ticket/add", { errorAdd: "Thêm vé thành công" });
+    delete req.session.errorAdd;
+})
+
+
 
 module.exports = managerRoute;
