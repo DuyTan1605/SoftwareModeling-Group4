@@ -199,26 +199,26 @@ accountRoute.post('/profile', function (req, res) {
     });
 });
 
-// accountRoute.get('/profile', restrict, async function(req, res) {
+accountRoute.get('/profile', restrict, async function (req, res) {
 
-// var accountData=await account.loadAccountbyEmail(res.locals.layoutModels.account.email);
-//    res.locals.layoutModels.account={
-//        id:accountData.id,
-//        name:accountData.ten,
-//        email:accountData.email,
-//        dob:accountData.ngaysinh,
-//        permission:accountData.quyenhan,
-//        gender:accountData.gioitinh,
-//        positivepoint:accountData.diemcong,
-//        address:accountData.diachi,
-//        type:accountData.loaitk,
-//        phone:accountData.sodienthoai
-//    };
-//  console.log(res.locals.layoutModels);
-//     res.render('account/profile', {
-//         layoutModels: res.locals.layoutModels
-//     });
-// });
+    var accountData = await account.loadAccountbyEmail(res.locals.layoutModels.account.email);
+    res.locals.layoutModels.account = {
+        id: accountData.id,
+        name: accountData.ten,
+        email: accountData.email,
+        dob: accountData.ngaysinh,
+        permission: accountData.quyenhan,
+        gender: accountData.gioitinh,
+        positivepoint: accountData.diemcong,
+        address: accountData.diachi,
+        type: accountData.loaitk,
+        phone: accountData.sodienthoai
+    };
+    console.log(res.locals.layoutModels);
+    res.render('account/profile', {
+        layoutModels: res.locals.layoutModels
+    });
+});
 
 // accountRoute.get('/changePassword', restrict, function(req, res) {
 //     res.render('account/changePassword', {
