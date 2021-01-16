@@ -1,0 +1,359 @@
+{{#section 'css'}}
+     
+      <style>
+          .main-book{
+              display: flex;
+              flex-direction: row;
+          }
+          .flex-left{
+              flex:0 1 65%;
+              color:white;
+              padding:0px;
+          }
+          .flex-right{
+              flex:0 1 30%;
+              color:white;
+              margin-left:2%;
+              border:1px solid red;
+              background: black;
+          }
+          .img-book{
+              width:100%;
+              height:400px
+          }
+          .title{
+              color:yellow;
+              font-weight: bold;
+          }
+          .ticket-table{
+              width:100%
+          }
+          .content
+{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.redBg{
+  background:red;
+}
+#Username
+{
+  border:none;
+  border-bottom:1px solid;
+}
+
+.screen
+{
+  width:100%;
+  height:20px;
+  background:#4388cc;
+  color:#fff;
+  line-height:20px;
+  font-size:15px;
+}
+
+.smallBox::before
+{
+  content:".";
+  width:20px;
+  height:20px;
+  float:left;
+  margin-left:50px;
+  display: inline-block;
+  
+}
+.greenBox::before
+{
+  content:"";
+  background:Green;
+}
+.redBox::before
+{
+  content:"";
+  background:Red;
+}
+.emptyBox::before
+{
+  content="";
+  box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+    background-color:#ccc;
+}
+
+.seats
+{
+  border:1px solid red;background:yellow;
+} 
+
+
+
+.seatGap
+{
+  width:40px;
+}
+
+.seatVGap
+{
+  height:40px;
+}
+
+table
+{
+  text-align:center;
+}
+
+
+.Displaytable
+{
+  text-align:center;
+}
+.Displaytable td, .Displaytable th {
+    border: 1px solid;
+    text-align: left;
+}
+
+textarea
+{
+  border:none;
+  background:transparent;
+}
+input{
+    color:black;
+    outline: none;
+}
+
+
+      </style>
+{{/section}}
+{{#section 'js'}}
+ <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script>
+    <script>
+       
+        function GetURLParameter(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++){
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam)
+                {
+                    return sParameterName[1];
+                }
+            }
+        }
+      
+        
+        $(document).ready(function()
+        {
+             var arr_choices=JSON.parse(sessionStorage.getItem("arr_choices"));
+
+             function displayInforTicket()
+            {
+                var total_tickets=decodeURIComponent("{{{total_tickets}}}");
+                var total_services=decodeURIComponent("{{{total_services}}}");
+                arr_choices=[];
+                var sum=0;
+                if($(this).val()!="")
+                {
+                let price=parseInt($(this).parent().prev().html());
+                let total=price*parseInt($(this).val());
+                $(this).parent().next().html(total);
+                }
+               for(let i=1;i<=total_tickets;i++)
+               {
+                 console.log("is ",$(`#sum_tickets_${i}`).html()!="");
+                   if($(`#sum_tickets_${i}`).html()!="" && $(`#sum_tickets_${i}`).html()!=undefined)
+                   {
+                     
+                       arr_choices.push({"type":1,"name":$($(`#sum_tickets_${i}`).siblings()[0]).html(),"price":parseInt($($(`#sum_tickets_${i}`).siblings()[1]).html()),"sum":parseInt($(`#sum_tickets_${i}`).html())});
+                       sum+=parseInt($(`#sum_tickets_${i}`).html());
+                        console.log("push1"+i);
+                        console.log(arr_choices);
+                   }
+               }
+              
+               for(let i=1;i<=total_services;i++)
+               {
+                 //console.log($(`#sum_services_${i}`).html());
+                   if($(`#sum_services_${i}`).html()!="" && $(`#sum_services_${i}`).html()!=undefined)
+                   {
+                       arr_choices.push({"type":2,"name":$($(`#sum_services_${i}`).siblings()[0]).html(),"price":parseInt($($(`#sum_services_${i}`).siblings()[1]).html()),"sum":parseInt($(`#sum_services_${i}`).html())});
+                       sum+=parseInt($(`#sum_services_${i}`).html());
+                   }
+               }
+               
+               $("#sum_price").html(sum+" VNĐ");
+               let choice_html='';
+               for(let i=0;i<arr_choices.length;i++)
+               {
+                   choice_html+=i!=arr_choices.length-1?arr_choices[i].sum/arr_choices[i].price +' '+ arr_choices[i].name+' + ':arr_choices[i].sum/arr_choices[i].price +' '+ arr_choices[i].name;
+               }
+               $("#arr_choices").html(choice_html);
+               //console.log(choice_html,total_tickets,total_services);
+            }
+
+
+            $("input").on('change',displayInforTicket);
+
+            $("#continueStep2").on("click",function()
+            {
+                 let sum=0;
+                for(let i=0;i<arr_choices.length;i++)
+                {
+                    if(arr_choices[i].type==1)
+                    {
+                        sum+=arr_choices[i].sum/arr_choices[i].price;
+                    }
+                }
+                let idFilm=GetURLParameter("idFilm");
+                let idTheater=GetURLParameter("idTheater");
+                let idRoom=GetURLParameter("idRoom");
+                let timeShow=GetURLParameter("timeShow");
+                let dateShow=GetURLParameter("dateShow");
+                //console.log(String(JSON.stringify(arr_choices)));
+                sessionStorage.setItem("arr_choices",String(JSON.stringify(arr_choices)));
+                 if(sum==0)
+                {
+                    $("#errMes").show();
+                }
+                else{
+                    sessionStorage.setItem("isDoneStep1",1);
+                window.location.href=`/book/step2?idFilm=${idFilm}&idTheater=${idTheater}&idRoom=${idRoom}&timeShow=${timeShow}&dateShow=${dateShow}`;
+
+                }
+
+            });
+        })
+        function loadData()
+        {
+            
+            let res=JSON.parse(sessionStorage.getItem("arr_choices"));
+            //console.log(res);
+            if(res!=null && res.length!=0)
+            {
+                  let tickets=$(".ticket");
+                let services=$(".service");
+                for(let i=0;i<res.length;i++)
+                {
+                    for(let j=0;j<tickets.length;j++)
+                    {
+                        if($($(tickets[j]).children()[0]).html()==res[i].name)
+                        {
+                            $($(tickets[j]).children()[2]).val(res[i].sum/res[i].price);
+                            $($(tickets[j]).children()[3]).html(res[i].sum);
+                        }
+                    }
+                     for(let k=0;k<services.length;k++)
+                    {
+                        if($($(services[k]).children()[0]).html()==res[i].name)
+                        {
+                            $($(services[k]).children()[2]).val(res[i].sum/res[i].price);
+                            $($(services[k]).children()[3]).html(res[i].sum);
+                        }
+                    }
+                }
+            }     
+        }
+        
+            function displayInforTicketPre()
+            {
+                 var total_tickets=decodeURIComponent("{{{total_tickets}}}");
+                 console.log(total_tickets);
+                var total_services=decodeURIComponent("{{{total_services}}}");
+                var sum=0;
+                let arr_choices_cache=JSON.parse(sessionStorage.getItem("arr_choices"));
+               if(arr_choices_cache!=null)
+               {
+                for(let i=0;i<arr_choices_cache.length;i++)
+                {
+                    sum+=arr_choices_cache[i].sum;
+                   
+                    for(let j=1;j<=total_tickets;j++)
+                    {
+                        if($($(`#sum_tickets_${j}`).siblings()[0]).html()==arr_choices_cache[i].name)
+                        {
+                             $(`#tickets_${j}`).val(arr_choices_cache[i].sum/arr_choices_cache[i].price);
+                        }
+                    }
+                     for(let k=1;k<=total_services;k++)
+                    {
+                        if($($(`#sum_services_${k}`).siblings()[0]).html()==arr_choices_cache[i].name)
+                        {
+                             $(`#services_${k}`).val(arr_choices_cache[i].sum/arr_choices_cache[i].price);
+                        }
+                    }
+                }
+            
+               $("#sum_price").html(sum+" VNĐ");
+               let choice_html='';
+               for(let i=0;i<arr_choices_cache.length;i++)
+               {
+                   choice_html+=i!=arr_choices_cache.length-1?arr_choices_cache[i].sum/arr_choices_cache[i].price +' '+ arr_choices_cache[i].name+'+ ':arr_choices_cache[i].sum/arr_choices_cache[i].price +' '+ arr_choices_cache[i].name;
+               }
+               $("#arr_choices").html(choice_html);
+               }
+            }
+        displayInforTicketPre();
+        loadData();
+    </script>
+{{/section}}
+<div class="container">
+    <div class="alert alert-warning alert-dismissible" role="alert" style="display: none;width:100%" id="errMes">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning! Vui lòng chọn ít nhất 1 vé</strong> 
+    </div>
+<div class="main-book">
+    <div class="flex-left">
+        <h3 class="title">VUI LÒNG NHẬP LỰA CHỌN</h3>
+        <table class="table ticket-table">
+  <thead>
+    <tr style="background-color: cornflowerblue">
+      <th scope="col">Loại vé</th>
+      <th scope="col">Giá vé(VNĐ)</th>
+      <th scope="col">Số lượng</th>
+      <th scope="col">Tổng tiền(VNĐ)</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each tickets}}
+        <tr class="ticket">
+      <th scope="row">{{tenve}}</th>
+      <td>{{giave}}</td>
+      <td style="color:black"><input type="number" id="tickets_{{idve}}" name="tickets_{{idve}}" step="1" min="0"></td>
+      <td id="sum_tickets_{{idve}}"></td>
+        </tr>
+      {{/each}}
+  </tbody>
+   <thead>
+    <tr style="background-color: cornflowerblue">
+      <th scope="col">Dịch vụ</th>
+      <th scope="col">Giá(VNĐ)</th>
+      <th scope="col">Số lượng</th>
+      <th scope="col">Tổng tiền(VNĐ)</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each services}}
+       <tr class="service">
+      <th scope="row">{{tendichvu}}</th>
+      <td>{{gia}}</td>
+      <td style="color:black"><input type="number" id="services_{{iddichvu}}" name="services_{{iddichvu}}" step="1" min="0"></td>
+      <td id="sum_services_{{iddichvu}}"></td>
+    </tr>
+      {{/each}}
+  </tbody>
+</table>
+    </div>
+    <div class="">
+
+    </div>
+    <div class="flex-right">
+        <img src="{{film.hinhanh}}" class="img-book">
+        <div>
+            <h3 id="film_name">{{film.tenphim}}</h3>
+            <div id="theater_name">Rạp: {{film.tenkhuvuc}} - {{film.tenrap}} - {{film.tenphongchieu}}</div>
+             <div id="time-show">Thời gian:{{ film.ngaychieu}} - {{film.giochieu}} </div>
+            <div>Lựa chọn:<span id="arr_choices"></span></div>
+            <div>Tổng: <span id="sum_price">0 VNĐ</span> </div>
+             <div class="btn btn-success" id="continueStep2">TIẾP TỤC</div>
+        </div>
+    </div>
+</div>
+</div>
