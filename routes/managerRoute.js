@@ -378,5 +378,105 @@ managerRoute.post("/film/delete", async function (req, res) {
         res.render('manager/film/index', { film: filmList, errorDelete: "Xóa phim thành công" });
     }
 })
+managerRoute.get("/event", async function (req, res) {
+    var listEvents = await eventModel.getAllEvents();
+    res.render("manager/event/index", { listEvents: listEvents, errorDelete: req.session.errorDelete });
+    delete req.session.errorDelete;
+});
+managerRoute.get("/editEvent", async function (req, res) {
+    var detailEvent = await eventModel.getEventById(parseInt(req.query.id));
+    console.log(detailEvent);
+    res.render('manager/event/edit', { event: detailEvent });
+})
+
+
+managerRoute.post('/editEvent', function (req, res) {
+    //console.log(req.file,req.body);
+    const upload1 = multer({ storage }).single('eventImage');
+    var temp;
+    upload1(req, res, async function (err) {
+        if (err) {
+            return res.send(err)
+        }
+        console.log('file uploaded to server')
+        console.log(req.file || "no")
+        console.log(req.body.temp_eventImage)
+        // SEND FILE TO CLOUDINARY
+
+        if (!req.file) {
+
+
+
+            var entity = {
+                idsukien: req.body.eventId,
+                tensukien: req.body.eventName,
+                ngaybatdau: req.body.dateStart,
+                ngayketthuc: req.body.dateEnd,
+                noidung: req.body.eventSummary,
+                hinhanh: req.body.temp_eventImage
+            }
+            // console.log(entity);
+            var result = await eventModel.updateInfoEvent(parseInt(req.body.eventId), entity);
+
+            if (result.changedRows > 0) {
+
+                res.render(`manager/event/edit`, { event: entity, errorEdit: "Cập nhật thông tin sự kiện thành công" });
+
+            }
+            else {
+
+                res.render(`manager/event/edit`, { event: entity, errorEdit: "Cập nhật thông tin sự kiện thất bại" });
+
+            }
+
+        }
+
+        const path = req.file.path;
+        const uniqueFilename = new Date().toISOString()
+
+        cloudinary.uploader.upload(
+            path,
+            { public_id: `projectmovies/${uniqueFilename}`, tags: `projectmovies` }, // directory and tags are optional
+            async function (err, image) {
+                if (err) return res.send(err)
+                console.log('file uploaded to Cloudinary')
+                // remove file from server
+                const fs = require('fs')
+                fs.unlinkSync(path)
+                // return image details
+                //temp=res.json(image);
+                console.log("Temp is");
+                console.log(image);
+
+                var entity = {
+                    idsukien: req.body.eventId,
+                    tensukien: req.body.eventName,
+                    ngaybatdau: req.body.dateStart,
+                    ngayketthuc: req.body.dateEnd,
+                    noidung: req.body.eventSummary,
+                    hinhanh: image.url
+                }
+                // console.log(entity);
+                var result = await eventModel.updateInfoEvent(parseInt(req.body.eventId), entity);
+
+                if (result.changedRows > 0) {
+
+                    res.render(`manager/event/edit`, { event: entity, errorEdit: "Cập nhật thông tin sự kiện thành công" });
+
+                }
+                else {
+
+                    res.render(`manager/event/edit`, { event: entity, errorEdit: "Cập nhật thông tin sự kiện thất bại" });
+
+                }
+            }
+        )
+    })
+
+
+
+
+})
+
 
 module.exports = managerRoute;
