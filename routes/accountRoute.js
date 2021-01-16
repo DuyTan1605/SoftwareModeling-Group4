@@ -131,49 +131,48 @@ accountRoute.get('/register', function (req, res) {
     });
 });
 
-// accountRoute.post('/register', function(req, res) {
+accountRoute.post('/register', function (req, res) {
 
-//     var bcrypt = require('bcryptjs');
-//     var salt = bcrypt.genSaltSync(10);
-//     var ePWD = bcrypt.hashSync(req.body.rawPWD,salt)+salt;
-//     while(ePWD.search(';')!=-1)
-//     {
-//         salt = bcrypt.genSaltSync(10);
-//         ePWD = bcrypt.hashSync(req.body.rawPWD,salt)+salt;
-//     }
-//     var ngender = req.body.radioGender;
-//     var entity = {
-//         password: ePWD,
-//         name: req.body.name,
-//         email: req.body.email,
-//         dob: req.body.dob,
-//         permission: 1,
-//         gender: ngender,
-//         address:req.body.address,
-//         phone:req.body.phone
-//     };
-//     account.isEmailExisted(entity)
-//         .then(function(result) {
-//             console.log(result);
-//             if (result) {
-//                 res.render('account/register', {
-//                     layoutModels: res.locals.layoutModels,
-//                     showError: true,
-//                     errorMsg: 'Đăng ký thất bại. Email đã tồn tại.'
-//                 });
-//             } else {
-//                 account.insert(entity)
-//                     .then(function(insertId) {
-//                         res.render('account/register', {
-//                             layoutModels: res.locals.layoutModels,
-//                             showSuccess: true,
-//                             errorMsg: 'Đăng ký thành công.'
-//                         });
-//                     });
-//             }
-//         });
+    var bcrypt = require('bcryptjs');
+    var salt = bcrypt.genSaltSync(10);
+    var ePWD = bcrypt.hashSync(req.body.rawPWD, salt) + salt;
+    while (ePWD.search(';') != -1) {
+        salt = bcrypt.genSaltSync(10);
+        ePWD = bcrypt.hashSync(req.body.rawPWD, salt) + salt;
+    }
+    var ngender = req.body.radioGender;
+    var entity = {
+        password: ePWD,
+        name: req.body.name,
+        email: req.body.email,
+        dob: req.body.dob,
+        permission: 1,
+        gender: ngender,
+        address: req.body.address,
+        phone: req.body.phone
+    };
+    account.isEmailExisted(entity)
+        .then(function (result) {
+            console.log(result);
+            if (result) {
+                res.render('account/register', {
+                    layoutModels: res.locals.layoutModels,
+                    showError: true,
+                    errorMsg: 'Đăng ký thất bại. Email đã tồn tại.'
+                });
+            } else {
+                account.insert(entity)
+                    .then(function (insertId) {
+                        res.render('account/register', {
+                            layoutModels: res.locals.layoutModels,
+                            showSuccess: true,
+                            errorMsg: 'Đăng ký thành công.'
+                        });
+                    });
+            }
+        });
 
-// });
+});
 
 // //Thay đổi thông tin người dùng
 // accountRoute.post('/profile', function(req, res) {
