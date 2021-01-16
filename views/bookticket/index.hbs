@@ -1,0 +1,253 @@
+{{#section 'css'}}
+    {{!-- <link href="/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" />
+     <link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css"> 
+    <link href="/assets/css/docs.css" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" href="/assets/bootstrap-3.4.1-dist/css/bootstrap.min.css">  --}}
+      <style>
+          
+          .list-area{
+        list-style-type: none;
+        color:white;
+        }
+    
+
+    .list-area>li{
+        display: inline-block;
+        margin-left:1%;
+        padding:10px 20px;
+        color:white
+    }
+     .list-area>li>a{
+        color:white;
+        text-decoration: none;
+    }
+    .bg-active{
+          background-color:rgb(255, 51, 153);
+    }
+    .element{
+        display:flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        margin-top:20px;
+        margin-bottom: 10px;
+        color:white;
+    }
+   
+    .intro{
+        flex:0 1 40%;
+         background-color:grey;
+         padding:15px;
+         margin-right:2%;
+        border-radius: 5px;
+         padding-bottom:20px
+    }
+    .room{
+        flex:0 1 20%;
+       color:white;
+       padding:5px
+        
+    }
+    .time{
+        flex:0 1 30%;
+    }
+    .name-theater{
+        font-weight:bold;
+      
+    }
+    .bg-green{
+        background: green;
+    }
+     .time-show{
+        list-style-type: none;
+    
+        padding:5px;
+        margin-top:10px
+    }
+    .time-show>li{
+        display: inline-block;
+        color:red;
+        padding:5px;
+        margin-left:5px;
+        margin-top:3px
+    }
+    .time-show>li>a{
+       text-decoration: none;
+       color:white;
+       background-color: grey;
+       padding:5px
+    }
+    .flex{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .flex-left{
+        flex:0 60%;
+       
+    }
+    .flex-right{
+  
+        color:white;
+      
+       text-align: center;
+       background: black;
+    }
+    .img-book{
+            width: 100%;
+            max-height: 500px;
+        }
+      </style>
+{{/section}}
+{{#section 'js'}}
+ {{!-- <script type="text/javascript" src="/assets/jquery-3.1.1.min.js"></script> --}}
+    <script>
+         function transfer(temp,idPhim,idPhong,ngayChieu)
+            {
+                console.log(transfer.agruments);
+                var theaters=JSON.parse(decodeURIComponent("{{{showTimeFilm}}}"));
+                let film=theaters.find(function(x)
+                {
+                    //console.log(x);
+                    return x.idphim==idPhim && x.giochieu==temp && x.idphongchieu==idPhong && x.ngaychieu==ngayChieu;
+                });
+                console.log("Res is"+ film);
+                //console.log(temp,idPhim,idPhong,ngayChieu.slice(0,10),film);
+                window.location.href=`/book?idFilm=${film.idphim}&idTheater=${film.idrap}&idRoom=${film.idphongchieu}&timeShow=${film.giochieu}&dateShow=${film.ngaychieu}`;
+            }
+        $(document).ready(function()
+        {
+           
+
+             function displayListArea()
+            {
+                sessionStorage.clear();
+                var areas=JSON.parse(decodeURIComponent("{{{areas}}}"));
+                //console.log(areas);
+                var html='';
+                for(let i=0;i<areas.length;i++)
+                {
+                    if(i==0)
+                    {
+                    html+=`<li class="bg-active"><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+                    }
+                    else{
+                        html+=`<li><a href="javascript:void(0)">${areas[i].tenkhuvuc}</a></li>`;
+                    }
+                }
+                $('.list-area').append(html);
+                displayListTheater($(".list-area li:first-child a").html());
+            }
+
+       displayListArea();
+
+       function checkExist(newList,y,z)
+        {
+           
+            for(let i=0;i<newList.length;i++)
+            {
+                if(newList[i].idphongchieu==y && newList[i].ngaychieu==z)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+       function displayListTheater(area)
+       {
+           var list=JSON.parse(decodeURIComponent("{{{showTimeFilm}}}"));
+           list=list.filter(function(x)
+           {
+               return x.tenkhuvuc==area;
+           });
+           console.log(list);
+           var html="";
+            var newList=[];
+            var pos=0;
+            for(let i=0;i<list.length;i++)
+            {
+               
+                var res=checkExist(newList,list[i].idphongchieu,list[i].ngaychieu);
+                console.log(res);
+                if(res==-1)
+                {
+                    var temp=list[i];
+                    temp.arrTimes=[];
+                    temp.arrTimes.push(list[i].giochieu);
+                    newList.push(temp);
+                }
+               else
+                {
+                    newList[res].arrTimes.push(list[i].giochieu);
+                }    
+                
+            }
+            console.log(newList);
+          for(let i=0;i<newList.length;i++)
+          {
+              html+=`
+               <div class="element">
+        <div class="intro">
+            <h4 class="name-theater">${newList[i].tenrap}</h4>
+            <div class="date-show">${newList[i].ngaychieu}</div>
+            <hr style="border:2px dashed white"/>
+            <div class="address"><i class="fas fa-map-marker-alt"></i> ${newList[i].diachi}</div>
+        </div>
+         <div class="room">
+              <div>
+                <h4 class="bg-green" style="display:inline-block;padding:2px">2D SUB</h4>
+            </div>
+             <div>
+                <h4 style="display:inline-block;padding:2px;border:1px solid red;margin-top:5%">${newList[i].tenphongchieu}</h4>
+            </div>
+        </div>
+        <div class="time">
+            <ul class="time-show">`;
+                for(let j=0;j<newList[i].arrTimes.length;j++)
+                {
+                    html+=`<li><a href="javascript:void(0)" onclick="transfer('${newList[i].arrTimes[j]}',${newList[i].idphim},${newList[i].idphongchieu},'${newList[i].ngaychieu}')">${newList[i].arrTimes[j]}</a></li>`;
+                }
+            html+=`    
+               
+            </ul>
+        </div>
+    </div>
+              `;
+          }
+         $(".content").append(html);
+       }
+       $('.list-area li a').on('click',function()
+        {
+            $('.list-area li').removeClass('bg-active');
+            $(this).parent().addClass('bg-active');
+              $('.content').empty();
+            displayListTheater($(this).html());
+        });
+        })
+        
+    </script>
+{{/section}}
+<div class="container">
+<ul class="list-area">
+
+</ul>
+
+<div class="content col-md-6 col-sm-12">
+    
+</div>
+<div class=" col-md-6 col-sm-12">
+   
+    <img src="{{film.hinhanh}}" class="img-book">
+        <div class="flex-right" style="padding-top:2%">
+            <h3 id="film_name">{{film.tenphim}}</h3>
+            <div>Thể loại: {{film.arrFilmType}}</div>
+             <div>Thời lượng: {{film.thoiluong}} phút </div>
+              <div>Điểm đánh giá: {{film.diemdanhgia}}</div>
+              <div>Đạo diễn: {{film.daodien}}</div>
+               <div>Diễn viên: {{film.dienvien}}</div>
+        </div>
+</div>
+
+
+</div>
