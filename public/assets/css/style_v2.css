@@ -1,0 +1,320 @@
+/*
+  * Header Styles
+  */
+  .site-header {
+	padding: 50px 0;
+	margin-bottom:10px;
+	*zoom: 1; }
+	.site-header:after {
+	  content: " ";
+	  clear: both;
+	  display: block;
+	  overflow: hidden;
+	  height: 0; }
+  
+  #branding {
+ 
+	 }
+	#branding .logo, #branding .logo-copy {
+	  display: inline-block;
+	  float: left; }
+	#branding .logo {
+	  margin-right: 10px;
+	 margin-top:0px; }
+	#branding .site-title {
+	  margin: 0;
+	  text-transform: uppercase;
+	  color: white;
+	  font-size: 16px;
+	  font-size: 1.0666666667em; }
+	  #branding .site-title a {
+		color: white; }
+	#branding .site-description {
+	  font-size: 13px;
+	  font-size: 0.8666666667em;
+	  color: #9198af; }
+
+.navbar li {
+	float:left;
+	padding: 0.1%;
+}
+
+.navbar a {
+	color: #fff;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+	.navbar a:hover {
+		color: #eee;
+	}
+
+.numberical-info {
+	font-size: 150%;
+	color: #f00;
+}
+
+.numberical-info a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #f00;
+
+}
+
+.numberical-info-small {
+	color: #f00;
+}
+
+.odd-row {
+	padding-top: 1%;
+	padding-bottom: 1%;
+	background-color: #DDDDDD;
+}
+
+.even-row {
+	padding-top: 1%;
+	padding-bottom: 1%;
+	background-color: #fff;
+}
+
+#related-product {
+	text-align: center;
+}
+
+#related-product img {
+	width: 150px;
+	height: 150px;
+}
+
+#wrapper img {
+	width: 650px;
+	height: 400px;
+}
+
+.panel-heading span {
+	font-weight: bold;
+	color: #fff;
+	size: 150%;
+}
+
+.list-group a {
+	cursor: pointer;
+}
+
+.item-row {
+	border: 1px solid;
+	border-radius: 4px;
+	border-color: #D9EDF7;
+	background-color: #F6F7F9;
+	display: flex;
+	align-items: center;
+}
+
+.item-row img {
+	width: 100%;
+	height: 100%;
+	padding-top: 3%;
+	padding-bottom: 3%;
+}
+
+.item-row a {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.item-info span {
+	font-weight: bold;
+}
+.input-group {
+	margin-bottom: 10px;
+}
+
+/* Dropdown Button */
+.dropbtn {
+   background-color: #404040;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: none
+}
+.list-group > .list-group :active{
+	display: block;
+	margin-bottom: 0;
+  }
+  
+  .list-group-item:focus-within + .list-group {
+	display: block;
+  }
+  
+  .list-group > .list-group-item {
+	border-radius: 0;
+	border-width: 1px 0 0 0;
+  }
+  
+  .list-group > .list-group-item:first-child {
+	border-top-width: 0;
+  }
+  
+  .list-group  > .list-group > .list-group-item {
+	padding-left: 2.5rem;
+  }
+
+  .main-navigation {
+	float: left;
+	margin-left:1%;
+	background: white;
+	border-radius: 5px; }
+	.main-navigation .menu-toggle, .main-navigation .menu, .main-navigation .search-form {
+	  display: inline-block;
+	  vertical-align: middle; }
+	.main-navigation .menu-toggle {
+	  color: #333;
+	  border: none;
+	  background: none;
+	  font-size: 18px;
+	  font-size: 1.2em;
+	  padding: 8px 15px;
+	  display: none;
+	  outline: none; }
+	  @media screen and (max-width: 1030px) {
+	 
+		.main-navigation .menu-toggle {
+		  display: inline-block; } }
+	  @media screen and (min-width: 1031px) {
+		 
+		.main-navigation .menu-toggle {
+		  display: none !important; } }
+	.main-navigation .menu {
+	  list-style: none;
+	  margin: 0; }
+	  @media screen and (min-width: 1031px) {
+		.main-navigation .menu {
+		  display: inline-block !important; } }
+	  @media screen and (max-width: 1030px) {
+		 #branding .logo-copy{
+			 display:none
+		 }
+		.main-navigation .menu {
+		  display: none; } }
+	.main-navigation .menu-item {
+	  display: inline-block;
+	  padding: 10px 0; }
+	  .main-navigation .menu-item a {
+		padding: 0 15px;
+		display: inline-block;
+		color: #84878d;
+		font-size: 14px;
+		font-size: 0.9333333333em;
+		font-weight: 400;
+		line-height: 1;
+		border-right: 1px solid #eeeeef; }
+	  .main-navigation .menu-item.current-menu-item, .main-navigation .menu-item:hover {
+		position: relative; }
+		.main-navigation .menu-item.current-menu-item:after, .main-navigation .menu-item:hover:after {
+		  content: " ";
+		  position: absolute;
+		  width: 80%;
+		  height: 3px;
+		  background-color: #ffaa3c;
+		  bottom: -3px;
+		  left: 0;
+		  right: 0;
+		  margin: 0 auto;
+		  display: block; }
+	.main-navigation .search-form input {
+	  background-color: #f0f0f0;
+	  border: none;
+	  border-left: 1px solid #eeeeef;
+	  border-radius: 0;
+	  font-family: inherit;
+	  font-weight: 300;
+	  width: 0;
+	  visibility: hidden;
+	  opacity: 0;
+	  -webkit-transition: .3s ease;
+			  transition: .3s ease;
+	  padding: 10px 0; }
+	  .main-navigation .search-form input.active {
+		width: 200px;
+		visibility: visible;
+		opacity: 1;
+		padding: 10px; }
+	.main-navigation .search-form button {
+	  background-color: transparent;
+	  border: none;
+	  border-left: 1px solid #eeeeef;
+	  border-radius: 0;
+	  border-top-right-radius: 5px;
+	  border-bottom-right-radius: 5px;
+	  margin-left: -5px;
+	  color: inherit;
+	  box-shadow: none;
+	  outline: none;
+	  -webkit-transition: .3s ease;
+			  transition: .3s ease; }
+	  .main-navigation .search-form button.active {
+		background-color: #f0f0f0; }
+  
+  .mobile-navigation {
+	clear: both;
+	padding-top: 20px;
+	display: none; }
+	@media screen and (min-width: 1031px) {
+	  .mobile-navigation {
+		display: none !important; } }
+	.mobile-navigation .menu {
+	  padding: 10px 20px;
+	  background-color: white;
+	  border-radius: 3px;
+	  list-style: none; }
+	  .mobile-navigation .menu li {
+		border-bottom: 1px solid #eeeeef; }
+		.mobile-navigation .menu li:last-child {
+		  border-bottom: none; }
+	  .mobile-navigation .menu a {
+		color: #84878d;
+		padding: 10px;
+		display: block; }
+		.mobile-navigation .menu a:hover {
+		  color: #ffaa3c; }
+
