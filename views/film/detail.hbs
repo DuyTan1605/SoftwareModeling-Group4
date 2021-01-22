@@ -1,0 +1,123 @@
+<style>
+    .flexForm{
+        display: flex;
+        flex-direction: row;
+    }
+    .flex-right{
+       
+         border:2px solid white;
+         color:white;
+          border-style: dashed;
+          padding-bottom: 10px;
+    }
+    .w-100{
+        width:100%;
+        margin-bottom:2%
+      
+    }
+    .mr{
+        margin-right:10%
+    }
+   table{
+       width:100%;
+       margin-top:20px;
+       margin-left:10px;
+  
+       
+   }
+   td{
+       border-bottom: 1px solid white;
+      padding:10px;
+   }
+  .left-col
+   {
+       width:30%
+   }
+  .right-col
+   {
+       width:60%;
+       text-align: right;
+   }
+   .list-content{
+       display: inline-block;
+   }
+  .film-name{
+    font-weight:bold;
+    font-size:200%;
+    color:yellow;
+    margin:10px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .film-summary{
+    font-style:italic;
+    margin: 10px;
+    
+  }
+</style>
+{{#section 'css'}}
+
+{{/section}}
+<div class="container">
+    <div class="col-md-4 col-sm-12"><img src="{{detailFilm.hinhanh}}" class="w-100"></div>
+    <div class="col-md-8 col-sm-12 flex-right">
+        <div class="film-name">{{detailFilm.tenphim}}</div>
+        <div class="film-summary">{{detailFilm.tomtat}}</div>
+  
+  <table style="width:100%">
+  <tr>
+    <td>Thể loại</td>
+    <td style="text-align:left">{{detailFilm.arrFilmType}}
+    </td>
+  </tr>
+  <tr>
+    <td>Diễn viên</td>
+    <td style="text-align:left">{{detailFilm.dienvien}}</td>
+  </tr>
+  <tr>
+    <td>Đạo điễn</td>
+    <td style="text-align:left">{{detailFilm.daodien}}</td>
+  </tr>
+  <tr>
+    <td>Điểm đánh giá</td>
+    <td style="text-align:left">{{detailFilm.diemdanhgia}}</td>
+  </tr>
+  <tr>
+    <td>Ngày phát hành</td>
+    <td style="text-align:left">{{detailFilm.ngayphathanh}}</td>
+  </tr>
+   <tr>
+    <td>Thời lượng</td>
+    <td style="text-align:left">{{detailFilm.thoiluong}} phút</td>
+  </tr>
+</table>
+{{#isEqual detailFilm.tinhtrang 0}}
+<a href="/bookticket?id={{detailFilm.idphim}}" class="btn btn-success" style="margin-top:3%;margin-left:10px">Đặt vé ngay</a>
+{{/isEqual}}
+{{!-- <a class="btn btn-danger" style="margin-top:5%">Xem trailer</a> --}}
+<button type="button" class="btn btn-primary" style="margin-top:3%;margin-left:10px" data-toggle="modal" data-target="#myModal">Xem trailer</button>
+    <div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" style="color:black">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Trailer</h4>
+      </div>
+      <div class="modal-body">
+       <iframe id="myFrame" style="width: 500px ; height: 281px" src="{{detailFilm.linktrailer}}" frameborder="0"
+allowfullscreen=""></iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+       
+            
+    </div>
+    
+
+</div>

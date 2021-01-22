@@ -1,0 +1,740 @@
+{{#section 'css'}}
+<link rel="stylesheet" href="/assets/css/selectSeat.css">
+<style>
+    
+    table{
+       color:gray;
+       font-weight:bolder
+    
+    }
+.img-book{
+        width:100%;
+        height:400px;
+        border-top-left-radius:20px;
+border-top-right-radius:20px;
+    }
+.summary{
+    border-bottom-left-radius:20px;
+    border-bottom-right-radius:20px;
+      border-top-left-radius:20px;
+        border-top-right-radius:20px;
+        border:1px solid white;
+    padding:0;     
+    color:white;
+    background: black;
+   
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#regForm {
+  background-color: #ffffff;
+  font-family: Raleway;
+  min-width: 300px;
+}
+
+h1 {
+  text-align: center;  
+}
+
+
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  background-color: #ffdddd;
+} 
+
+/* Hide all steps by default: */
+.tab {
+  display: none;
+}
+
+#preBtn,#nextBtn {
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 17px;
+  font-family: Raleway;
+  cursor: pointer;
+  margin:10px
+}
+
+#preBtn,#nextBtn:hover {
+  opacity: 0.8;
+}
+
+#prevBtn {
+  background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbbbbb;
+  border: none;  
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+  background-color: #4CAF50;
+}
+</style>
+{{/section}}
+
+{{#section 'js'}}
+<script src="/assets/js/bookticket.js"></script>
+ <script src="https://checkout.stripe.com/checkout.js"></script>
+ {{!-- <script src="/assets/js/purchase.js"></script> --}}
+{{!-- <script src="/assets/js/selectticket.js"></script> --}}
+
+  <script>
+var stripePublicKey=JSON.parse(decodeURIComponent("{{{stripePublicKey}}}"));
+
+var stripeHandler = StripeCheckout.configure({
+    key: stripePublicKey,
+    locale: 'en',
+    token: function(token) {
+
+        fetch('/book/purchase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                stripeTokenId: token.id,
+                amount: parseInt(document.getElementById("sum_price").innerHTML.slice(0,document.getElementById("sum_price").innerHTML.length-4)),
+                seats:sessionStorage.getItem("seats"),
+                idlichchieu:JSON.parse(decodeURIComponent("{{{idlichchieu}}}")),
+                idkhachhang:JSON.parse(decodeURIComponent("{{{idkhachhang}}}")),
+                diemcong:parseInt(sessionStorage.getItem("point")),
+                arrChoices:document.getElementById("arr_choices").innerHTML
+
+            })
+        }).then(function(res) {
+          alert("Thanh toán thành công");
+          sessionStorage.clear();
+          window.location.href="/home";
+            return res.json()
+        }).then(function(data) {
+            //alert(data.message)
+           
+        }).catch(function(error) {
+            console.error(error)
+        })
+    }
+})
+
+
+
+
+var currentTab = 0; // Current tab is set to be the first tab (0)
+showTab(currentTab); // Display the current tab
+
+function showTab(n) {
+  // This function will display the specified tab of the form...
+  var x = document.getElementsByClassName("tab");
+  x[n].style.display = "block";
+  //... and fix the Previous/Next buttons:
+  if (n == 0) {
+    document.getElementById("prevBtn").style.display = "none";
+  } else {
+    document.getElementById("prevBtn").style.display = "inline";
+  }
+  if (n == (x.length - 1)) {
+    document.getElementById("nextBtn").innerHTML = "Thanh toán";
+    document.getElementById("nextBtn").className+=" btn-purchase";
+     document.getElementsByClassName('btn-purchase')[0].addEventListener('click', purchaseClicked)
+  } else {
+    document.getElementById("nextBtn").innerHTML = "Tiếp";
+  }
+  //... and run a function that will display the correct step indicator:
+  fixStepIndicator(n)
+}
+
+function purchaseClicked() {
+    // var priceElement = document.getElementsByClassName('cart-total-price')[0]
+     var price = parseInt(document.getElementById("sum_price").innerHTML);
+     stripeHandler.open({
+        amount: price,
+        currency:'vnd'
+    })
+
+    //console.log("Clickkkk"+stripePublicKey );
+}
+
+
+function nextPrev(n) {
+    
+  // This function will figure out which tab to display
+  var x = document.getElementsByClassName("tab");
+  // Exit the function if any field in the current tab is invalid:
+  if (n == 1 && !validateForm()) return false;
+  // Hide the current tab:
+  x[currentTab].style.display = "none";
+  // Increase or decrease the current tab by 1:
+  currentTab = currentTab + n;
+  // if you have reached the end of the form...
+  if (currentTab >= x.length) {
+    // ... the form gets submitted:
+   
+       return false;
+  }
+  // Otherwise, display the correct tab:
+  showTab(currentTab);
+}
+
+function validateForm() {
+  // This function deals with validation of the form fields
+  var x, y, i, valid = true;
+ if(currentTab==0)
+ {
+     var tickets=document.getElementsByClassName("ticket");
+     var flag=0;
+     for(let i=0;i<tickets.length;i++)
+     {
+         if(tickets[i].getElementsByClassName("quantity_ticket")[0].value==0)
+         {
+             flag++;
+         }
+     }
+     if(flag==tickets.length)
+     {
+         valid=false;
+         for(let i=0;i<tickets.length;i++)
+        {
+            tickets[i].getElementsByClassName("quantity_ticket")[0].className+=" invalid";
+          
+        }
+     }
+     
+ }
+ if(currentTab==1)
+ {
+     console.log("Innnn");
+    
+     if($('#NumberDisplay').val()=="")
+     {
+          valid=false;
+          document.getElementById("notification").innerHTML = `Vui lòng chọn đủ `+ $("#Numseats").val()+` ghế`;
+           $(".notice").show();
+
+     }
+ }
+ if(currentTab==2)
+ {
+   if(!sessionStorage.getItem("point"))
+   {
+    sessionStorage.setItem("point",parseInt(JSON.parse(decodeURIComponent("{{{diemcong}}}"))));
+   }
+ }
+  // If the valid status is true, mark the step as finished and valid:
+  if (valid) {
+    document.getElementsByClassName("step")[currentTab].className += " finish";
+   
+  }
+  return valid; // return the valid status
+}
+
+function fixStepIndicator(n) {
+  // This function removes the "active" class of all steps...
+  var i, x = document.getElementsByClassName("step");
+  for (i = 0; i < x.length; i++) {
+    x[i].className = x[i].className.replace(" active", "");
+  }
+  //... and adds the "active" class on the current step:
+  x[n].className += " active";
+}
+
+
+ function GetURLParameter(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++){
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam)
+                {
+                    return sParameterName[1];
+                }
+            }
+        }
+         function updateTextArea() { 
+                
+            if ($("input:checked").length == ($("#Numseats").val()))
+                {
+                $(".seatStructure *").prop("disabled", true);
+                
+                var allNameVals = [];
+                var allNumberVals = [];
+                var allSeatsVals = [];
+            
+                //Storing in Array
+                allNumberVals.push($("#Numseats").val());
+                $('#seatsBlock :checked').each(function() {
+                allSeatsVals.push($(this).val());
+                });
+                
+                //Displaying 
+            
+                $('#NumberDisplay').val(allNumberVals);
+                $('#seatsDisplay').val(allSeatsVals);
+                sessionStorage.setItem("seats",$('#seatsDisplay').val());
+                $(".notice").hide();
+                }
+            else
+                {
+                   
+                document.getElementById("notification").innerHTML = `Vui lòng chọn đủ `+ $("#Numseats").val()+` ghế`;
+                $(".notice").show();
+                //alert("Please select " + ($("#Numseats").val()) + " seats")
+                }
+            }
+        function deleteTextArea()
+        {
+            $('#NumberDisplay').val("");
+            $('#seatsDisplay').val("");
+            $(".notice").hide();
+            $(".seatStructure *").prop("disabled", false);
+           
+        }
+
+        function updatePoint()
+        {
+          var nowPoint=parseInt(document.getElementsByClassName("point")[0].innerHTML);
+          var nowPrice=document.getElementById("sum_price").innerHTML;
+          
+          if(nowPoint>=5)
+          {
+            nowPoint=nowPoint-5;
+           document.getElementsByClassName("point")[0].innerHTML=nowPoint;
+            document.getElementById("notification_point").innerHTML="Dùng điểm cộng thành công!";
+            $(".notice_point").show();
+            document.getElementById("sum_price").innerHTML=(parseInt(nowPrice)-10000) +" VNĐ";
+             
+          }
+          else{
+             document.getElementById("notification_point").innerHTML="Dùng điểm không thành công(điểm cộng không đủ)!";
+            $(".notice_point").show();
+          }
+         sessionStorage.setItem("point",nowPoint);
+         console.log("Now point is "+sessionStorage.getItem("point"))
+        }
+        $(document).ready(function()
+        {
+            function myFunction() {
+            alert($("input:checked").length);
+            }
+
+            $("#backStep1").on("click",function()
+            {
+               window.history.back();
+            })
+
+
+            $(":checkbox").click(function() {
+            if ($("input:checked").length == ($("#Numseats").val())) {
+                $(":checkbox").prop('disabled', true);
+                $(':checked').prop('disabled', false);
+            }
+            else
+                {
+                $(":checkbox").prop('disabled', false);
+                }
+            });
+
+            $(".ticket").on("change",loadData);
+           function loadData()
+           {
+               let html='';
+            
+               let seat=sessionStorage.getItem("total_ticket");
+               var reversed_arr=JSON.parse(decodeURIComponent("{{{seats}}}"));
+               console.log("Number seat is"+seat);
+              
+              
+               $("#Numseats").val(seat);
+               $("input[type='checkbox']").each(function()
+               {
+                 if(reversed_arr.length>0)
+                 {
+                   for(let i=0;i<reversed_arr.length;i++)
+                   {
+                    let temp=reversed_arr[i].vitrighe.split(",");
+                    for(let j=0;j<temp.length;j++)
+                    {
+                      if($(this).val()==temp[j])
+                      {
+                         $(this).attr({type:'text',readonly:'true'}).addClass("redBg");
+                         
+                      }
+                    }
+                 }
+                 }
+               });
+           }
+           loadData();
+           
+        })
+
+
+
+</script>
+{{/section}}
+<div class="container">
+<div class="col-md-8">
+<form id="regForm" action="/action_page.php" style="border-radius:10px;margin-bottom:2%">
+  <h1 style="padding:10px">THÔNG TIN ĐẶT VÉ</h1>
+  <!-- One "tab" for each step in the form: -->
+  <div class="tab">
+
+           <div class="alert alert-warning alert-dismissible" role="alert" style="display: none;width:100%" id="errMes">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning! Vui lòng chọn ít nhất 1 vé</strong> 
+    </div>
+<div class="main-book" style="overflow-x: auto;">
+    <table class="table ticket-table">
+  <thead>
+    <tr style="background-color: rgb(255, 51, 153); color:black">
+      <th scope="col">Loại vé</th>
+      <th scope="col">Giá vé(VNĐ)</th>
+      <th scope="col">Số lượng</th>
+      <th scope="col">Tổng tiền(VNĐ)</th>
+    </tr>
+  </thead>
+  {{#each tickets}}
+        <tr class="ticket">
+      <th scope="row" class="ticket_name">{{tenve}}</th>
+      <td class="price">{{giave}}</td>
+      <td style="color:black"><input type="number" id="tickets_{{@index}}" name="tickets_{{@index}}" class="quantity_ticket" value="0" min="0"></td>
+      <td class="sum_tickets"></td>
+        </tr>
+      {{/each}}
+  </tbody>
+   <thead>
+    <tr style="background-color: rgb(255, 51, 153); color:black">
+      <th scope="col">Dịch vụ</th>
+      <th scope="col">Giá(VNĐ)</th>
+      <th scope="col">Số lượng</th>
+      <th scope="col">Tổng tiền(VNĐ)</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each services}}
+       <tr class="service">
+      <th scope="row" class="service_name">{{tendichvu}}</th>
+      <td class="price">{{gia}}</td>
+      <td style="color:black"><input type="number" id="services_{{iddichvu}}" name="services_{{iddichvu}}" class="quantity_service" value="0" step="1" min="0"></td>
+      <td class="sum_services"></td>
+    </tr>
+      {{/each}}
+  </tbody>
+</table>
+</div>
+  </div>
+
+  <div class="tab">
+ 
+ <div class="flex-left" style="overflow-x: scroll;">
+<div class="inputForm">
+<center>
+ Số chỗ đã chọn: <input type="number" id="Numseats" style="color: black;outline:none;cursor:not-allowed" required readonly>
+  <br/><br/>
+</center>
+</div>
+  
+
+<div class="seatStructure">
+<center>
+  
+<table id="seatsBlock">
+<div class="alert alert-danger notice" role="alert" style="display:none">
+    <strong id="notification"></strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+  <tr>
+    <td colspan="14"><div class="screen">MÀN HÌNH</div></td>
+    <td rowspan="20" style="padding-left:30px">
+      <div class="smallBox greenBox">Chỗ đã chọn</div> <br/>
+      <div class="smallBox redBox">Chỗ đã đặt</div><br/>
+      <div class="smallBox emptyBox">Chỗ trống</div><br/>
+    </td>
+    
+    <br/>
+  </tr>
+  
+  <tr>
+    <td></td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td></td>
+    <td>6</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>10</td>
+    <td>11</td>
+    <td>12</td>
+</tr>
+  
+<tr>
+    <td>A</td>
+    <td><input type="checkbox" class="seats" value="A1"></td>
+    <td><input type="checkbox" class="seats" value="A2"></td>
+    <td><input type="checkbox" class="seats" value="A3"></td>
+    <td><input type="checkbox" class="seats" value="A4"></td>
+    <td><input type="checkbox" class="seats" value="A5"></td>
+    <td class="seatGap"></td>
+    <td><input type="checkbox" class="seats" value="A6"></td>
+    <td><input type="checkbox" class="seats" value="A7"></td>
+    <td><input type="checkbox" class="seats" value="A8"></td>
+    <td><input type="checkbox" class="seats" value="A9"></td>
+    <td><input type="checkbox" class="seats" value="A10"></td>
+    <td><input type="checkbox" class="seats" value="A11"></td>
+    <td><input type="checkbox" class="seats" value="A12"></td>
+  </tr>
+  
+  <tr>
+    <td>B</td>
+    <td><input type="checkbox" class="seats" value="B1"></td>
+    <td><input type="checkbox" class="seats" value="B2"></td>
+    <td><input type="checkbox" class="seats" value="B3"></td>
+    <td><input type="checkbox" class="seats" value="B4"></td>
+    <td><input type="checkbox" class="seats" value="B5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="B6"></td>
+    <td><input type="checkbox" class="seats" value="B7"></td>
+    <td><input type="checkbox" class="seats" value="B8"></td>
+    <td><input type="checkbox" class="seats" value="B9"></td>
+    <td><input type="checkbox" class="seats" value="B10"></td>
+    <td><input type="checkbox" class="seats" value="B11"></td>
+    <td><input type="checkbox" class="seats" value="B12"></td>
+  </tr>
+  
+  <tr>
+    <td>C</td>
+    <td><input type="checkbox" class="seats" value="C1"></td>
+    <td><input type="checkbox" class="seats" value="C2"></td>
+    <td><input type="checkbox" class="seats" value="C3"></td>
+    <td><input type="checkbox" class="seats" value="C4"></td>
+    <td><input type="checkbox" class="seats" value="C5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="C6"></td>
+    <td><input type="checkbox" class="seats" value="C7"></td>
+    <td><input type="checkbox" class="seats" value="C8"></td>
+    <td><input type="checkbox" class="seats" value="C9"></td>
+    <td><input type="checkbox" class="seats" value="C10"></td>
+    <td><input type="checkbox" class="seats" value="C11"></td>
+    <td><input type="checkbox" class="seats" value="C12"></td>
+</tr>
+  
+<tr>
+    <td>D</td>
+    <td><input type="checkbox" class="seats" value="D1"></td>
+    <td><input type="checkbox" class="seats" value="D2"></td>
+    <td><input type="checkbox" class="seats" value="D3"></td>
+    <td><input type="checkbox" class="seats" value="D4"></td>
+    <td><input type="checkbox" class="seats" value="D5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="D6"></td>
+    <td><input type="checkbox" class="seats" value="D7"></td>
+    <td><input type="checkbox" class="seats" value="D8"></td>
+    <td><input type="checkbox" class="seats" value="D9"></td>
+    <td><input type="checkbox" class="seats" value="D10"></td>
+    <td><input type="checkbox" class="seats" value="D11"></td>
+    <td><input type="checkbox" class="seats" value="D12"></td>
+</tr>
+  
+<tr>
+    <td>E</td>
+    <td><input type="checkbox" class="seats" value="E1"></td>
+    <td><input type="checkbox" class="seats" value="E2"></td>
+    <td><input type="checkbox" class="seats" value="E3"></td>
+    <td><input type="checkbox" class="seats" value="E4"></td>
+    <td><input type="checkbox" class="seats" value="E5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="E6"></td>
+    <td><input type="checkbox" class="seats" value="E7"></td>
+    <td><input type="checkbox" class="seats" value="E8"></td>
+    <td><input type="checkbox" class="seats" value="E9"></td>
+    <td><input type="checkbox" class="seats" value="E10"></td>
+    <td><input type="checkbox" class="seats" value="E11"></td>
+    <td><input type="checkbox" class="seats" value="E12"></td>
+</tr>
+  
+<tr class="seatVGap"></tr>
+  
+<tr>
+    <td>F</td>
+    <td><input type="checkbox" class="seats" value="F1"></td>
+    <td><input type="checkbox" class="seats" value="F2"></td>
+    <td><input type="checkbox" class="seats" value="F3"></td>
+    <td><input type="checkbox" class="seats" value="F4"></td>
+    <td><input type="checkbox" class="seats" value="F5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="F6"></td>
+    <td><input type="checkbox" class="seats" value="F7"></td>
+    <td><input type="checkbox" class="seats" value="F8"></td>
+    <td><input type="checkbox" class="seats" value="F9"></td>
+    <td><input type="checkbox" class="seats" value="F10"></td>
+    <td><input type="checkbox" class="seats" value="F11"></td>
+    <td><input type="checkbox" class="seats" value="F12"></td>
+</tr>
+  
+<tr>
+    <td>G</td>
+    <td><input type="checkbox" class="seats" value="G1"></td>
+    <td><input type="checkbox" class="seats" value="G2"></td>
+    <td><input type="checkbox" class="seats" value="G3"></td>
+    <td><input type="checkbox" class="seats" value="G4"></td>
+    <td><input type="checkbox" class="seats" value="G5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="G6"></td>
+    <td><input type="checkbox" class="seats" value="G7"></td>
+    <td><input type="checkbox" class="seats" value="G8"></td>
+    <td><input type="checkbox" class="seats" value="G9"></td>
+    <td><input type="checkbox" class="seats" value="G10"></td>
+    <td><input type="checkbox" class="seats" value="G11"></td>
+    <td><input type="checkbox" class="seats" value="G12"></td>
+</tr>
+  
+<tr>
+    <td>H</td>
+    <td><input type="checkbox" class="seats" value="H1"></td>
+    <td><input type="checkbox" class="seats" value="H2"></td>
+    <td><input type="checkbox" class="seats" value="H3"></td>
+    <td><input type="checkbox" class="seats" value="H4"></td>
+    <td><input type="checkbox" class="seats" value="H5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="H6"></td>
+    <td><input type="checkbox" class="seats" value="H7"></td>
+    <td><input type="checkbox" class="seats" value="H8"></td>
+    <td><input type="checkbox" class="seats" value="H9"></td>
+    <td><input type="checkbox" class="seats" value="H10"></td>
+    <td><input type="checkbox" class="seats" value="H11"></td>
+    <td><input type="checkbox" class="seats" value="H12"></td>
+</tr>
+  
+<tr>
+    <td>I</td>
+    <td><input type="checkbox" class="seats" value="I1"></td>
+    <td><input type="checkbox" class="seats" value="I2"></td>
+    <td><input type="checkbox" class="seats" value="I3"></td>
+    <td><input type="checkbox" class="seats" value="I4"></td>
+    <td><input type="checkbox" class="seats" value="I5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="I6"></td>
+    <td><input type="checkbox" class="seats" value="I7"></td>
+    <td><input type="checkbox" class="seats" value="I8"></td>
+    <td><input type="checkbox" class="seats" value="I9"></td>
+    <td><input type="checkbox" class="seats" value="I10"></td>
+    <td><input type="checkbox" class="seats" value="I11"></td>
+    <td><input type="checkbox" class="seats" value="I12"></td>
+</tr>
+  
+<tr>
+    <td>J</td>
+    <td><input type="checkbox" class="seats" value="J1"></td>
+    <td><input type="checkbox" class="seats" value="J2"></td>
+    <td><input type="checkbox" class="seats" value="J3"></td>
+    <td><input type="checkbox" class="seats" value="J4"></td>
+    <td><input type="checkbox" class="seats" value="J5"></td>
+    <td></td>
+    <td><input type="checkbox" class="seats" value="J6"></td>
+    <td><input type="checkbox" class="seats" value="J7"></td>
+    <td><input type="checkbox" class="seats" value="J8"></td>
+    <td><input type="checkbox" class="seats" value="J9"></td>
+    <td><input type="checkbox" class="seats" value="J10"></td>
+    <td><input type="checkbox" class="seats" value="J11"></td>
+    <td><input type="checkbox" class="seats" value="J12"></td>
+</tr>
+  
+  
+</table>
+  
+<br/><a class="btn btn-success" onclick="updateTextArea()">Xác nhận</a>
+<a class="btn btn-danger" onclick="deleteTextArea()">Hủy</a>
+<br/>
+</center>
+</div>
+      
+<br/><br/>
+
+<div class="displayerBoxes">
+<center>
+  <table class="Displaytable">
+  <tr>
+    <th style="padding:5px">Số chỗ ngồi</th>
+    <th style="padding:5px">Chi tiết chỗ ngồi đã đặt</th>
+  </tr>
+  <tr>
+    <td><textarea id="NumberDisplay"></textarea></td>
+    <td><textarea id="seatsDisplay"></textarea></td>
+  </tr>
+</table>
+</center>
+</div>
+    </div>
+  
+ 
+
+  </div>
+  <div class="tab" style="padding-left:2%;font-size:20px">
+
+    <div class="alert alert-danger notice_point" role="alert" style="display:none">
+      <strong id="notification_point"></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+  <div>Tên khách hàng:{{layoutModels.account.name}} </div>
+      <div>Điểm cộng:<span class="point"> {{layoutModels.account.positivepoint}}</span></div>
+      <a class="btn btn-success" href="#" onclick="updatePoint()">Dùng điểm cộng</a>
+     
+  </div>
+  <div class="tab">
+      <h1>NHẬP THÔNG TIN THẺ ĐỂ THANH TOÁN</h1>
+  </div>
+  <div style="overflow:auto;">
+    <div style="float:right;">
+      <button type="button" id="prevBtn" onclick="nextPrev(-1)">Trở về</button>
+      <button type="button" id="nextBtn" onclick="nextPrev(1)">Tiếp</button>
+    </div>
+  </div>
+  <!-- Circles which indicates the steps of the form: -->
+  <div style="text-align:center;padding-bottom:2%">
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+  </div>
+</form>
+</div>
+<div class="col-md-4 col-sm-12 summary">
+        <img src="{{film.hinhanh}}" class="img-book">
+        <div style="text-align:center;margin-top:2%">
+            <h3 id="film_name">{{film.tenphim}}</h3>
+            <div id="theater_name">Rạp: {{film.tenkhuvuc}} - {{film.tenrap}} - {{film.tenphongchieu}}</div>
+             <div id="time-show">Thời gian:{{ film.ngaychieu}} - {{film.giochieu}} </div>
+            <div>Lựa chọn: <span id="arr_choices"></span></div>
+            <div>Tổng: <span id="sum_price">0 VNĐ</span> </div>
+        </div>
+</div>
+</div>

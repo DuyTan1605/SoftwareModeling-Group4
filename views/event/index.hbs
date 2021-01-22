@@ -1,0 +1,190 @@
+{{#section 'title'}}
+    Kết quả tìm kiếm
+{{/section}}
+{{#section 'breadcrumbs'}}
+    <div class="row container-fluid">
+        <ol class="breadcrumb breadcrumb-arrow">
+            <li><a href="/home">Trang chủ</a></li>
+            <li class="active"><span>Kết quả tìm kiếm</span></li>
+        </ol>
+        <!-- /Đường dẫn -->
+    </div>
+{{/section}}
+{{#section 'css'}}
+    {{!-- <link href="/assets/css/docs.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-social.css" rel="stylesheet" type="text/css" media="all" /> --}}
+    
+    <style type="text/css">
+    .btn-account i {
+        margin-top: 2%;
+        font-size: 30px;
+    }
+    
+    .btn-account span {
+        padding-left: 15px;
+        padding-right: 5px;
+        width: 100%;
+        display: inline-block;
+        text-align: left;
+        font-size: 130%;
+    }
+    
+    .btn-account span small {
+        width: 100%;
+        display: inline-block;
+        text-align: left;
+    }
+    .content{
+       float:center;
+    }
+    .element{
+   
+    border:2px solid red;
+   
+    }
+    .img-film{
+        width:100%;
+        height:80%;
+       height:400px;
+        display: inline-block;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+
+
+
+        .event_list{
+    margin-top:2%;
+ color:black
+  }
+  .ele_event:nth-child(odd){
+    background:orange;
+    margin-right:1%;
+    padding:5px;
+  margin-bottom: 1%;
+    border-bottom-left-radius: 20px;
+     border-top-right-radius: 20px;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   vertical-align: middle;
+   align-items: center;
+   height: 100%
+  }
+  .ele_event:nth-child(even){
+    background:rgb(255, 51, 153);
+    padding:5px;
+    margin-bottom: 1%;
+     border-top-left-radius: 20px;
+     border-bottom-right-radius: 20px;
+     display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   vertical-align: middle;
+   align-items: center;
+    height: 100%
+  }
+  .event_content{
+   
+   flex:0 1 40%;
+  }
+  .img_content{
+    width:50%;
+    height: 250px;
+    flex:0 1 50%;
+    margin-left:10%
+  }
+  .event-name{
+    font-weight:bold;
+    margin-bottom:10px
+  }
+  .event-content{
+    font-style:italic
+  }
+  .pagination{
+    margin-left:5%;
+  }
+@media(max-width:500px)
+    {
+        .event_content{
+   
+        flex:0 1 50%;
+        }
+     .img_content{
+    width:100px;
+    height: 150px;
+    flex:0 1 40%;
+    margin-left:10%
+  }
+    
+    }
+
+    </style>
+{{/section}}
+{{#section 'js'}}  
+    <script type="text/javascript">
+    function addOrUpdateUrlParam(name, value) {
+        var href = window.location.href;
+        var regex = new RegExp("[&\\?]" + name + "=");
+        if (regex.test(href)) {
+            regex = new RegExp("([&\\?])" + name + "=\\d+");
+            window.location.href = href.replace(regex, "$1" + name + "=" + value);
+        } else {
+            if (href.indexOf("?") > -1)
+                window.location.href = href + "&" + name + "=" + value;
+            else
+                window.location.href = href + "?" + name + "=" + value;
+        }
+    }
+    </script>
+{{/section}}
+
+<div class="container" style="color:white;">
+   
+    {{#each rows}}
+      <div class="ele_event col-md-5 col-sm-12">
+                <div class="event_content">
+                    <div class="event-name">{{tensukien}}</div>
+                    <div class="event-content">{{noidung}}</div>
+                    <div class="event-content"><b>Áp dụng đến: {{ngayketthuc}}</b></div>
+                </div>
+                <img src="{{hinhanh}}" style="border-radius:20px" class="img_content">
+     </div>
+
+    {{/each}}
+    </div>
+    
+    
+
+
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {{#if showPrevPage}}
+                <li>
+                    <a href="javascript: addOrUpdateUrlParam('page', {{prevPage}});" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {{/if}}
+            {{#each pages }}
+                {{#if isActive }}
+                    <li class="active">
+                        <a href="javascript: void(0)">{{pageValue}}</a>
+                    </li>
+                {{else}}
+                    <li>
+                        <a href="javascript: addOrUpdateUrlParam('page', {{pageValue}});">{{pageValue}}</a>
+                    </li>
+                {{/if}}
+            {{/each}}
+            {{#if showNextPage }}
+                <li>
+                    <a href="javascript: addOrUpdateUrlParam('page', {{nextPage}});" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {{/if}}
+        </ul>
+    </nav>

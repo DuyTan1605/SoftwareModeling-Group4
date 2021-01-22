@@ -1,0 +1,256 @@
+{{#section "title"}}
+  Trang chủ
+{{/section}}
+{{#section "css"}}
+  <link rel="stylesheet" href="/assets/css/flexslider.min.css" />
+  <link rel="stylesheet" href="/assets/css/style-carousel.css" />
+  <style>
+    div.lastest-event { height: 200px;
+	margin-bottom: 2%;
+  			}
+	.lastest-event img {  max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: 0 auto;}
+	.img-responsive1 {
+			
+		width:100%;
+		height:100%;
+	}
+	.latest-movie img{
+		max-height: 29.5vh;
+	}
+  </style>
+{{/section}}
+{{#section "js"}}
+  <script src="/assets/js/jquery-flexslider-min.js"></script>
+  <script src="/assets/js/carousel.js"></script>
+  <script>
+    $(document).ready(function() {
+  $('.flexslider').flexslider({
+    animation: "slides",
+                animationLoop: true,
+                pausePlay: false,
+                mousewheel: false,
+                rtl: true,
+              
+  });
+});
+  </script>
+{{/section}}
+{{#section "breadcrumbs"}}
+  <div class="row container-fluid">
+    <ol class="breadcrumb breadcrumb-arrow">
+      <li>
+        <a href="/home">
+          Trang chủ
+        </a>
+      </li>
+    </ol>
+    <!-- /Đường dẫn -->
+  </div>
+{{/section}}
+{{#isManage layoutModels.account.permission}}
+  <main class="main-content">
+    <div class="container">
+      <div class="page">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="flexslider">
+              <ul class="slides">
+                {{#each popular_film}}
+                  <li>
+                    <a href="/film/detail/{{idphim}}">
+                      <img
+                        src="{{hinhanh}}"
+                        style="height: 50vw;"
+                        title="{{tenphim}}"
+                        alt="{{tenphim}}"
+                      />
+                    </a>
+                  </li>
+                {{/each}}
+              </ul>
+            </div>
+            <!-- /.flexslider -->
+          </div>
+          <div class="col-md-3" style="text-align: center;">
+            <div class="row">
+              {{#each events}}
+                <div class="col-sm-6 col-md-12">
+                  <div class="latest-movie">
+                    <a href="/event">
+                      <img
+                        src="{{hinhanh}}"
+                        alt="{{tensukien}}"
+                       style="height:11em"
+                      />
+                    </a>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        <!-- .row -->
+        <div class="row">
+          {{!-- {{#each events}}
+								<div class="col-sm-6 col-md-3 lastest-event">
+								
+									<a href="/event/{{idsukien}}"><img src="{{hinhanh}}" alt="{{tensukien}}" class="img-responsive1"></a>
+									
+								</div>
+							{{/each}} --}}
+          <div class="col-xs-11 col-md-10">
+            <div
+              id="carousel"
+              class="carousel slide"
+              data-ride="carousel"
+              data-type="multi"
+              data-interval="2500"
+            >
+              <div class="carousel-inner">
+                {{#each futureFilm}}
+                  {{#isEqual @index 0}}
+                    <div class="item active">
+                      <div class="carousel-col">
+                        <div class="block red img-responsive">
+                          <a href="/film/detail/{{idphim}}">
+                            <img
+                              src="{{hinhanh}}"
+                              class="img-responsive1"
+                              title="{{tenphim}}"
+                              alt="{{tenphim}}"
+                            />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="item">
+                      <div class="carousel-col">
+                        <div class="block green img-responsive">
+                          <a href="/film/detail/{{idphim}}">
+                            <img
+                              src="{{hinhanh}}"
+                              class="img-responsive1"
+                              title="{{tenphim}}"
+                              alt="{{tenphim}}"
+                            />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  {{/isEqual}}
+                {{/each}}
+              </div>
+              <!-- Controls -->
+              <div class="left carousel-control">
+                <a href="#carousel" role="button" data-slide="prev">
+                  <span
+                    class="glyphicon glyphicon-chevron-left"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="sr-only">
+                    Previous
+                  </span>
+                </a>
+              </div>
+              <div class="right carousel-control">
+                <a href="#carousel" role="button" data-slide="next">
+                  <span
+                    class="glyphicon glyphicon-chevron-right"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="sr-only">
+                    Next
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- .row -->
+        <div class="row" style="margin-top:1%">
+          <div class="col-md-4">
+            <h2 class="section-title">
+              Phim đang chiếu
+            </h2>
+            <p>
+              Khám phá và đặt vé ngay
+            </p>
+            <ul class="movie-schedule">
+              {{#each presentFilm}}
+                <li>
+                  {{!-- <div class="date">{{#formatShortDate ngaychieu}}{{/formatShortDate}}</div> --}}
+                  <div class="entry-title">
+                    <a href="/film/detail/{{idphim}}">
+                      {{tenphim}}
+                    </a>
+                  </div>
+                </li>
+              {{/each}}
+              <div class="entry-title" style="margin-top:1%">
+                <a href="/film/presentFilm">
+                  Xem thêm...
+                </a>
+              </div>
+            </ul>
+            <!-- .movie-schedule -->
+          </div>
+          <div class="col-md-4">
+            <h2 class="section-title">
+              Phim sắp chiếu
+            </h2>
+            <p>
+              Đừng bỏ lỡ những bộ phim hấp dẫn sắp công chiếu
+            </p>
+            <ul class="movie-schedule">
+              {{#each futureFilm}}
+                <li>
+                  <div class="entry-title">
+                    <a href="/film/detail/{{idphim}}">
+                      {{tenphim}}
+                    </a>
+                  </div>
+                </li>
+              {{/each}}
+              <div class="entry-title" style="margin-top:1%">
+                <a href="/film/futureFilm">
+                  Xem thêm...
+                </a>
+              </div>
+            </ul>
+            <!-- .movie-schedule -->
+          </div>
+          <div class="col-md-4">
+            <h2 class="section-title">
+              Sự kiện diễn ra
+            </h2>
+            <p>
+              Tham gia sự kiện hấp dẫn đang diễn ra
+            </p>
+            <ul class="movie-schedule">
+              {{#each events}}
+                <li>
+                  <div class="entry-title">
+                    <a href="#">
+                      {{tensukien}}
+                    </a>
+                  </div>
+                </li>
+              {{/each}}
+              <div class="entry-title" style="margin-top:1%">
+                <a href="/event">
+                  Xem thêm...
+                </a>
+              </div>
+            </ul>
+            <!-- .movie-schedule -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- .container -->
+  </main>
+{{/isManage}}
